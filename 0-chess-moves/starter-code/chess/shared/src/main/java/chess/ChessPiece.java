@@ -69,26 +69,69 @@ public class ChessPiece {
          * Generally -- we take a board and a position and then check the positions around to see whats going on.
          * Each piece has different dimensions we are going to check.
          * Maybe use a try to generalize the boundaries of the board.
+         *
+         * Capture rules for each piece.
+         * Can never move to a position that your own piece is in.
          */
         switch (this.type) {
             case KING: {
                 //some code here;
+                // Move 1 square in any direction
+                // Cannot make a move that would allow the opponent to capture their king
                 break;
             }
             case QUEEN: {
-                //Queen calculatio here
+                //All moves a Rook and Bishop can make.
                 break;
             }
             case BISHOP: {
-                //Bishop calculation here
+                //Move in diagonal lines as far as there is open space
+                //capture piece at the end of a line.
+
+                //The way we check the Bishop would be similar, but we probably need a double nested loop.
                 break;
             }
             case KNIGHT: {
-                //Knight calculatio here
+                //Move in L shape. 2 squares in one direction, 1 square in another direction.
+                // Can jump over pieces.
                 break;
             }
             case ROOK: {
-                //Rook calculations here
+                //Move in straight lines as far as there is open space.
+                //Can capture an enemy at the end of the line.
+
+                //searching right
+                for (int col = myPosition.getColumn() + 1; col <= 8; col++) {
+                    ChessPosition potentialPosition = new ChessPosition(myPosition.getRow(), col);
+                    if (legalMove(potentialPosition, board)) {
+                        ChessMove move = new ChessMove(myPosition, potentialPosition, null);
+                        moves.add(move);
+                    }
+                }
+                //searching left
+                for (int col = myPosition.getColumn() - 1; col >= 1; col--) {
+                    ChessPosition potentialPosition = new ChessPosition(myPosition.getRow(), col);
+                    if (legalMove(potentialPosition, board)) {
+                        ChessMove move = new ChessMove(myPosition,potentialPosition, null);
+                        moves.add(move);
+                    }
+                }
+                // Search up
+                for (int row = myPosition.getRow() + 1; row <= 8; row++) {
+                    ChessPosition potentialPosition = new ChessPosition(row, myPosition.getColumn());
+                    if (legalMove(potentialPosition, board)) {
+                        ChessMove move = new ChessMove(myPosition, potentialPosition, null);
+                        moves.add(move);
+                    }
+                }
+                // Search down
+                for (int row = myPosition.getRow() - 1; row >= 1; row--) {
+                    ChessPosition potentialPosition = new ChessPosition(row, myPosition.getColumn());
+                    if (legalMove(potentialPosition, board)) {
+                        ChessMove move = new ChessMove(myPosition, potentialPosition, null);
+                        moves.add(move);
+                    }
+                }
                 break;
             }
             case PAWN: {
@@ -107,5 +150,14 @@ public class ChessPiece {
             }
         }
         return moves;
+    }
+
+    private boolean legalMove(ChessPosition potentialPosition, ChessBoard board){
+        if (!board.containsPiece(potentialPosition))
+            return true;
+        else if (board.getPiece(potentialPosition).pieceColor != this.getTeamColor())
+            return true;
+        else
+            return false;
     }
 }
