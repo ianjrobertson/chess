@@ -1,7 +1,5 @@
 package chess;
 
-import javax.print.CancelablePrintJob;
-
 /**
  * A chessboard that can hold and rearrange chess pieces.
  * <p>
@@ -10,9 +8,18 @@ import javax.print.CancelablePrintJob;
  */
 public class ChessBoard {
 
+    //Need to figure out how we choose a color for teams!
     private ChessPiece [][] board;
+    private final ChessGame.TeamColor teamColor;
+    private final ChessGame.TeamColor otherTeamColor;
     public ChessBoard() {
         this.board = new ChessPiece[8][8];
+        this.teamColor = teamColor;
+        if (this.teamColor == ChessGame.TeamColor.WHITE)
+            this.otherTeamColor = ChessGame.TeamColor.BLACK;
+        else
+            this.otherTeamColor = ChessGame.TeamColor.WHITE;
+
         resetBoard();
         //Maybe call resetBoard() here to make it the default board.
     }
@@ -48,77 +55,78 @@ public class ChessBoard {
      * (How the game of chess normally starts)
      */
     public void resetBoard() {
+        //Might need to double check the indexing of the pieces... Looking up or looking down.
         //Start by looping through row 1 and row 6 to set pawns.
         for (int col = 0; col < 8; col++)
         {
             //Top Row
             ChessPosition top = new ChessPosition(1, col);
-            ChessPiece topPawn = new ChessPiece(Color, ChessPiece.PieceType.PAWN); // Need to decide how we choose colors
+            ChessPiece topPawn = new ChessPiece(teamColor, ChessPiece.PieceType.PAWN); // Need to decide how we choose colors
             this.addPiece(top, topPawn);
 
             //Bottom Row
             ChessPosition bottom = new ChessPosition(6, col);
-            ChessPiece bottomPawn = new ChessPiece(OtherColor, ChessPiece.PieceType.PAWN); //Whatever the other color is
+            ChessPiece bottomPawn = new ChessPiece(otherTeamColor, ChessPiece.PieceType.PAWN); //Whatever the other color is
             this.addPiece(bottom, bottomPawn);
         }
         //Set Rooks
         ChessPosition topLeft = new ChessPosition(0,0);
         ChessPosition topRight = new ChessPosition(0,7);
-        ChessPiece topLeftRook = new ChessPiece(Color, ChessPiece.PieceType.ROOK);
-        ChessPiece topRightRook = new ChessPiece(Color, ChessPiece.PieceType.ROOK);
+        ChessPiece topLeftRook = new ChessPiece(teamColor, ChessPiece.PieceType.ROOK);
+        ChessPiece topRightRook = new ChessPiece(teamColor, ChessPiece.PieceType.ROOK);
         this.addPiece(topLeft, topLeftRook);
         this.addPiece(topRight, topRightRook);
 
         ChessPosition bottomLeft = new ChessPosition(7,0);
         ChessPosition bottomRight = new ChessPosition(7,7);
-        ChessPiece bottomLeftRook = new ChessPiece(OtherColor, ChessPiece.PieceType.ROOK);
-        ChessPiece bottomRightRook = new ChessPiece(OtherColor, ChessPiece.PieceType.ROOK);
+        ChessPiece bottomLeftRook = new ChessPiece(otherTeamColor, ChessPiece.PieceType.ROOK);
+        ChessPiece bottomRightRook = new ChessPiece(otherTeamColor, ChessPiece.PieceType.ROOK);
         this.addPiece(bottomLeft, bottomLeftRook);
         this.addPiece(bottomRight, bottomRightRook);
 
         //Set Knights
         ChessPosition topLeftK = new ChessPosition(0,1);
         ChessPosition topRightK = new ChessPosition(0,6);
-        ChessPiece topLeftKnight = new ChessPiece(Color, ChessPiece.PieceType.KNIGHT);
-        ChessPiece topRightKnight = new ChessPiece(Color, ChessPiece.PieceType.KNIGHT);
+        ChessPiece topLeftKnight = new ChessPiece(teamColor, ChessPiece.PieceType.KNIGHT);
+        ChessPiece topRightKnight = new ChessPiece(teamColor, ChessPiece.PieceType.KNIGHT);
         this.addPiece(topLeftK, topLeftKnight);
         this.addPiece(topRightK, topRightKnight);
 
         ChessPosition bottomLeftK = new ChessPosition(7,1);
         ChessPosition bottomRightK = new ChessPosition(7,6);
-        ChessPiece bottomLeftKnight = new ChessPiece(OtherColor, ChessPiece.PieceType.KNIGHT);
-        ChessPiece bottomRightKnight = new ChessPiece(OtherColor, ChessPiece.PieceType.KNIGHT);
+        ChessPiece bottomLeftKnight = new ChessPiece(otherTeamColor, ChessPiece.PieceType.KNIGHT);
+        ChessPiece bottomRightKnight = new ChessPiece(otherTeamColor, ChessPiece.PieceType.KNIGHT);
         this.addPiece(bottomLeftK, bottomLeftKnight);
         this.addPiece(bottomRightK, bottomRightKnight);
 
         //Set Bishops
         ChessPosition topLeftB = new ChessPosition(0,2);
         ChessPosition topRightB = new ChessPosition(0,5);
-        ChessPiece topLeftBishop = new ChessPiece(Color, ChessPiece.PieceType.BISHOP);
-        ChessPiece topRightBishop = new ChessPiece(Color, ChessPiece.PieceType.BISHOP);
+        ChessPiece topLeftBishop = new ChessPiece(teamColor, ChessPiece.PieceType.BISHOP);
+        ChessPiece topRightBishop = new ChessPiece(teamColor, ChessPiece.PieceType.BISHOP);
         this.addPiece(topLeftB, topLeftBishop);
         this.addPiece(topRightB, topRightBishop);
 
         ChessPosition bottomLeftB = new ChessPosition(7,2);
         ChessPosition bottomRightB = new ChessPosition(7,5);
-        ChessPiece bottomLeftBishop = new ChessPiece(OtherColor, ChessPiece.PieceType.BISHOP);
-        ChessPiece bottomRightBishop = new ChessPiece(OtherColor, ChessPiece.PieceType.BISHOP);
+        ChessPiece bottomLeftBishop = new ChessPiece(otherTeamColor, ChessPiece.PieceType.BISHOP);
+        ChessPiece bottomRightBishop = new ChessPiece(otherTeamColor, ChessPiece.PieceType.BISHOP);
         this.addPiece(bottomLeftB, bottomLeftBishop);
         this.addPiece(bottomRightB, bottomRightBishop);
 
         //Set Queens
         ChessPosition topQueenPos = new ChessPosition(0,3);
         ChessPosition bottomQueenPos = new ChessPosition(7,3);
-        ChessPiece topQueen = new ChessPiece(Color, ChessPiece.PieceType.QUEEN);
-        ChessPiece bottomQueen = new ChessPiece(Color, ChessPiece.PieceType.QUEEN);
+        ChessPiece topQueen = new ChessPiece(teamColor, ChessPiece.PieceType.QUEEN);
+        ChessPiece bottomQueen = new ChessPiece(otherTeamColor, ChessPiece.PieceType.QUEEN);
         this.addPiece(topQueenPos, topQueen);
         this.addPiece(bottomQueenPos, bottomQueen);
 
         //Set Kings
         ChessPosition topKingPos = new ChessPosition(0,4);
         ChessPosition bottomKingPos = new ChessPosition(7,4);
-        ChessPiece topKing = new ChessPiece(Color, ChessPiece.PieceType.KING);
-        ChessPiece bottomKing = new ChessPiece(Color, ChessPiece.PieceType.KING);
+        ChessPiece topKing = new ChessPiece(teamColor, ChessPiece.PieceType.KING);
+        ChessPiece bottomKing = new ChessPiece(otherTeamColor, ChessPiece.PieceType.KING);
         this.addPiece(topKingPos, topKing);
         this.addPiece(bottomKingPos, bottomKing);
     }
