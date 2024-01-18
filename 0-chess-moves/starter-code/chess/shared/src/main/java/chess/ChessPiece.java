@@ -89,7 +89,8 @@ public class ChessPiece {
                 //capture piece at the end of a line.
 
                 //The way we check the Bishop would be similar, but we probably need a double nested loop.
-                break;
+                BishopMovesCalculator bishopMovesCalculator = new BishopMovesCalculator(this.getTeamColor());
+                return bishopMovesCalculator.pieceMoves(board, myPosition);
             }
             case KNIGHT: {
                 //Move in L shape. 2 squares in one direction, 1 square in another direction.
@@ -97,42 +98,8 @@ public class ChessPiece {
                 break;
             }
             case ROOK: {
-                //Move in straight lines as far as there is open space.
-                //Can capture an enemy at the end of the line.
-
-                //searching right
-                for (int col = myPosition.getColumn() + 1; col <= 8; col++) {
-                    ChessPosition potentialPosition = new ChessPosition(myPosition.getRow(), col);
-                    if (legalMove(potentialPosition, board)) {
-                        ChessMove move = new ChessMove(myPosition, potentialPosition, null);
-                        moves.add(move);
-                    }
-                }
-                //searching left
-                for (int col = myPosition.getColumn() - 1; col >= 1; col--) {
-                    ChessPosition potentialPosition = new ChessPosition(myPosition.getRow(), col);
-                    if (legalMove(potentialPosition, board)) {
-                        ChessMove move = new ChessMove(myPosition,potentialPosition, null);
-                        moves.add(move);
-                    }
-                }
-                // Search up
-                for (int row = myPosition.getRow() + 1; row <= 8; row++) {
-                    ChessPosition potentialPosition = new ChessPosition(row, myPosition.getColumn());
-                    if (legalMove(potentialPosition, board)) {
-                        ChessMove move = new ChessMove(myPosition, potentialPosition, null);
-                        moves.add(move);
-                    }
-                }
-                // Search down
-                for (int row = myPosition.getRow() - 1; row >= 1; row--) {
-                    ChessPosition potentialPosition = new ChessPosition(row, myPosition.getColumn());
-                    if (legalMove(potentialPosition, board)) {
-                        ChessMove move = new ChessMove(myPosition, potentialPosition, null);
-                        moves.add(move);
-                    }
-                }
-                break;
+                RookMovesCalculator rookMovesCalculator = new RookMovesCalculator(this.getTeamColor());
+                return rookMovesCalculator.pieceMoves(board, myPosition);
             }
             case PAWN: {
                 if ( this.isFirstMove() ) {
@@ -148,6 +115,7 @@ public class ChessPiece {
                 //Pawn calculations here
                 break;
             }
+            //TODO add default case
         }
         return moves;
     }
