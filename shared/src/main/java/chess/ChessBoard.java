@@ -22,6 +22,14 @@ public class ChessBoard {
         //Maybe call resetBoard() here to make it the default board.
     }
 
+    public ChessGame.TeamColor getTeamColor() {
+        return this.teamColor;
+    }
+
+    public ChessGame.TeamColor getOtherTeamColor() {
+        return this.otherTeamColor;
+    }
+
     /**
      * Adds a chess piece to the chessboard
      *

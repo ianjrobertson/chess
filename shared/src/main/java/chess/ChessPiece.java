@@ -94,26 +94,16 @@ public class ChessPiece {
             }
             case KNIGHT: {
                 //Move in L shape. 2 squares in one direction, 1 square in another direction.
-                // Can jump over pieces.
-                break;
+                KnightMovesCalculator knightMovesCalculator = new KnightMovesCalculator(this.getTeamColor());
+                return knightMovesCalculator.pieceMoves(board, myPosition);
             }
             case ROOK: {
                 RookMovesCalculator rookMovesCalculator = new RookMovesCalculator(this.getTeamColor());
                 return rookMovesCalculator.pieceMoves(board, myPosition);
             }
             case PAWN: {
-                if ( this.isFirstMove() ) {
-                    // If not obstructed
-                        //Add the next two positions to the moves
-                }
-                // If there is a piece in <row + 1, col + 1> or <row + 1, col -1>
-                    // Add <row + 1, col + 1> or <row + 1, col -1> to moves.
-                    // Need checking if the pawn is on an edge so we don't get an out of bounds exception.
-                // If position.col + 1 is not obstructed:
-                    // Add position.col + 1 to moves
-
-                //Pawn calculations here
-                break;
+                PawnMovesCalculator pawnMovesCalculator = new PawnMovesCalculator(this.getTeamColor());
+                return pawnMovesCalculator(board, myPosition);
             }
             //TODO add default case
         }
