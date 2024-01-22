@@ -103,7 +103,7 @@ public class ChessPiece {
             }
             case PAWN: {
                 PawnMovesCalculator pawnMovesCalculator = new PawnMovesCalculator(this.getTeamColor());
-                return pawnMovesCalculator(board, myPosition);
+                return pawnMovesCalculator.pieceMoves(board, myPosition);
             }
             //TODO add default case
         }
