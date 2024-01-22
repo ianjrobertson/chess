@@ -18,9 +18,6 @@ public abstract class PieceMovesCalculator {
             return true;
         else
             return false;
-
-        //TODO add attack move handling for pawns
-        // If piece type is pawn, and there is an enemy piece row + 1, col + 1, that is legal move. But not a legal move if just empty.
     }
 
     protected boolean inBounds(int row, int col) {

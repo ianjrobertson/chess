@@ -64,6 +64,9 @@ public class ChessBoard {
         return getPiece(position) != null;
     }
 
+    public boolean containsEnemyPiece(ChessPosition position) {
+        return (this.containsPiece(position) && this.getPiece(position).getTeamColor() != this.getTeamColor()); }
+
     /**
      * Sets the board to the default starting board
      * (How the game of chess normally starts)
@@ -142,10 +145,5 @@ public class ChessBoard {
         ChessPiece bottomKing = new ChessPiece(teamColor, ChessPiece.PieceType.KING);
         this.addPiece(topKingPos, topKing);
         this.addPiece(bottomKingPos, bottomKing);
-    }
-
-    public static void main(String[] args)
-    {
-
     }
 }
