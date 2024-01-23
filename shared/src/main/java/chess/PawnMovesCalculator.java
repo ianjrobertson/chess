@@ -18,7 +18,7 @@ public class PawnMovesCalculator extends PieceMovesCalculator {
      */
     protected boolean legalMove(ChessPosition potentialPosition, ChessBoard board, boolean attackMove) {
      if (attackMove)
-             return board.containsEnemyPiece(potentialPosition);
+             return board.containsEnemyPiece(potentialPosition, this.getColor());
      return !board.containsPiece(potentialPosition);
     }
 
@@ -28,12 +28,16 @@ public class PawnMovesCalculator extends PieceMovesCalculator {
         //Pass control to white piece movements.
         if (this.getColor() == ChessGame.TeamColor.WHITE) {
             if (myPosition.getRow() == 2) { //Check if at row == 2
-               potentialPosition = new ChessPosition(4, myPosition.getColumn());
-               if (legalMove(potentialPosition, board, false)) { //Check legal move
-                   moves.add(new ChessMove(myPosition, potentialPosition, null)); //add move row += 1
-               }
+                potentialPosition = new ChessPosition(3, myPosition.getColumn());
+                if (legalMove(potentialPosition, board, false)) { //Check if legalMove(row + 1)
+                    moves.add(new ChessMove(myPosition, potentialPosition, null)); //add move row + 1
+                    potentialPosition = new ChessPosition(4, myPosition.getColumn());
+                    if (legalMove(potentialPosition, board, false)) { //Check legal move
+                        moves.add(new ChessMove(myPosition, potentialPosition, null)); //add move row += 1
+                    }
+                }
             }
-            if (myPosition.getRow() == 7) { // Check promotion piece
+            else if (myPosition.getRow() == 7) { // Check promotion piece
                 potentialPosition = new ChessPosition(8, myPosition.getColumn());
                 if (legalMove(potentialPosition, board, false)) {
                     moves.add(new ChessMove(myPosition, potentialPosition, ChessPiece.PieceType.ROOK));
@@ -42,9 +46,11 @@ public class PawnMovesCalculator extends PieceMovesCalculator {
                     moves.add(new ChessMove(myPosition, potentialPosition, ChessPiece.PieceType.QUEEN));
                 }
             }
-            potentialPosition = new ChessPosition(myPosition.getRow() + 1, myPosition.getColumn());
-            if (legalMove(potentialPosition, board, false)) { //Check if legalMove(row + 1)
-                moves.add(new ChessMove(myPosition, potentialPosition, null)); //add move row + 1
+            else {
+                potentialPosition = new ChessPosition(myPosition.getRow() + 1, myPosition.getColumn());
+                if (legalMove(potentialPosition, board, false)) { //Check if legalMove(row + 1)
+                    moves.add(new ChessMove(myPosition, potentialPosition, null)); //add move row + 1
+                }
             }
 
             //attack move left
@@ -77,12 +83,16 @@ public class PawnMovesCalculator extends PieceMovesCalculator {
         //pass control to black movements.
         else if(this.getColor() == ChessGame.TeamColor.BLACK) {
             if (myPosition.getRow() == 7) { //Check if at row == 7. starting move.
-                potentialPosition = new ChessPosition(5, myPosition.getColumn());
+                potentialPosition = new ChessPosition(6, myPosition.getColumn());
                 if (legalMove(potentialPosition, board, false)) { //Check legal move
                     moves.add(new ChessMove(myPosition, potentialPosition, null)); //add move row -= 2
+                    potentialPosition = new ChessPosition(5, myPosition.getColumn());
+                    if (legalMove(potentialPosition, board, false)) { //Check if legalMove(row + 1)
+                        moves.add(new ChessMove(myPosition, potentialPosition, null)); //add move row + 1
+                    }
                 }
             }
-            if (myPosition.getRow() == 2) { // Check promotion piece
+            else if (myPosition.getRow() == 2) { // Check promotion piece
                 potentialPosition = new ChessPosition(1, myPosition.getColumn());
                 if (legalMove(potentialPosition, board, false)) {
                     moves.add(new ChessMove(myPosition, potentialPosition, ChessPiece.PieceType.ROOK));
@@ -91,15 +101,18 @@ public class PawnMovesCalculator extends PieceMovesCalculator {
                     moves.add(new ChessMove(myPosition, potentialPosition, ChessPiece.PieceType.QUEEN));                }
             }
             //standard forward move
-            potentialPosition = new ChessPosition(myPosition.getRow() + 1, myPosition.getColumn());
-            if (legalMove(potentialPosition, board, false)) { //Check if legalMove(row + 1)
-                moves.add(new ChessMove(myPosition, potentialPosition, null)); //add move row + 1
+            else {
+                potentialPosition = new ChessPosition(myPosition.getRow() - 1, myPosition.getColumn());
+                if (legalMove(potentialPosition, board, false)) { //Check if legalMove(row + 1)
+                    moves.add(new ChessMove(myPosition, potentialPosition, null)); //add move row + 1
+                }
             }
 
+
             //attack move left
-            potentialPosition = new ChessPosition(myPosition.getRow() + 1, myPosition.getColumn() - 1);
+            potentialPosition = new ChessPosition(myPosition.getRow() - 1, myPosition.getColumn() - 1);
             if (legalMove(potentialPosition, board, true)) {
-                if (myPosition.getRow() == 7) {
+                if (myPosition.getRow() == 2) {
                     moves.add(new ChessMove(myPosition, potentialPosition, ChessPiece.PieceType.ROOK));
                     moves.add(new ChessMove(myPosition, potentialPosition, ChessPiece.PieceType.BISHOP));
                     moves.add(new ChessMove(myPosition, potentialPosition, ChessPiece.PieceType.KNIGHT));
@@ -110,7 +123,7 @@ public class PawnMovesCalculator extends PieceMovesCalculator {
             }
 
             //attack move right
-            potentialPosition  = new ChessPosition(myPosition.getRow() + 1, myPosition.getColumn() + 1);
+            potentialPosition  = new ChessPosition(myPosition.getRow() - 1, myPosition.getColumn() + 1);
             if (legalMove(potentialPosition, board,true )) {
                 if (myPosition.getRow() == 7) {
                     moves.add(new ChessMove(myPosition, potentialPosition, ChessPiece.PieceType.ROOK));

@@ -1,7 +1,6 @@
 package chess;
 
 import java.util.Objects;
-
 /**
  * Represents a single square position on a chess board
  * <p>
@@ -50,10 +49,7 @@ public class ChessPosition {
      * 0 codes for top row
      */
     public int getRowIndex() {
-        if (this.row == 4)
-            return 4;
-        else
-            return 8 % this.row;
+        return 8 - this.getRow();
     }
 
     @Override

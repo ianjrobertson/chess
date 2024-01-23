@@ -17,55 +17,58 @@ public class QueenMovesCalculator extends PieceMovesCalculator {
         ChessPosition potentialPosition;
         boolean illegalMove = false;
 
-        //iterate diagonally up right
-        for (int row = myPosition.getRow(); row <= 8 && !illegalMove; row++) {
-            for (int col = myPosition.getColumn(); col <= 8 && !illegalMove; col++) {
-                potentialPosition = new ChessPosition(row, col);
-                if (legalMove(potentialPosition, board)) {
-                    moves.add(new ChessMove(myPosition, potentialPosition, null)); }
-                else
+        for (int i = 1; (myPosition.getRow() + i <= 8) && (myPosition.getColumn() + i <= 8) && !illegalMove; i++) {
+            potentialPosition = new ChessPosition(myPosition.getRow() + i, myPosition.getColumn() + i);
+            if (legalMove(potentialPosition, board)) {
+                moves.add(new ChessMove(myPosition, potentialPosition, null));
+                if (board.containsEnemyPiece(potentialPosition, this.getColor())) {
                     illegalMove = true;
+                }
             }
+            else
+                illegalMove = true;
         }
 
+        illegalMove = false;
+        //iterate diagonnally down right
+        for (int i = 1; (myPosition.getRow() - i >= 1) && (myPosition.getColumn() + i <= 8) && !illegalMove; i++) {
+            potentialPosition = new ChessPosition(myPosition.getRow() - i, myPosition.getColumn() + i);
+            if (legalMove(potentialPosition, board)) {
+                moves.add(new ChessMove(myPosition, potentialPosition, null));
+                if (board.containsEnemyPiece(potentialPosition, this.getColor())) {
+                    illegalMove = true;
+                }
+            }
+            else
+                illegalMove = true;
+        }
+
+        illegalMove = false;
         //iterate diagonally down left
-        illegalMove = false;
-        for (int row = myPosition.getRow(); row >= 1 && !illegalMove; row--) {
-            for (int col = myPosition.getColumn(); col >= 1 && !illegalMove; col--) {
-                potentialPosition = new ChessPosition(row, col);
-                if (legalMove(potentialPosition, board)) {
-                    moves.add(new ChessMove(myPosition, potentialPosition, null));
-                }
-                else
+        for (int i = 1; (myPosition.getRow() - i >= 1) && (myPosition.getColumn() - i >= 1) && !illegalMove; i++) {
+            potentialPosition = new ChessPosition(myPosition.getRow() - i, myPosition.getColumn() - i);
+            if (legalMove(potentialPosition, board)) {
+                moves.add(new ChessMove(myPosition, potentialPosition, null));
+                if (board.containsEnemyPiece(potentialPosition, this.getColor())) {
                     illegalMove = true;
-
+                }
             }
+            else
+                illegalMove = true;
         }
 
-        //iterate diagaonlly up left
         illegalMove = false;
-        for (int row = myPosition.getRow(); row <= 8 && !illegalMove; row++) {
-            for (int col = myPosition.getColumn(); col >= 1 && !illegalMove; col--) {
-                potentialPosition = new ChessPosition(row, col);
-                if (legalMove(potentialPosition, board)) {
-                    moves.add(new ChessMove(myPosition, potentialPosition, null));
-                }
-                else
+        //iterate diagonally up left
+        for (int i = 1; (myPosition.getRow() + i <= 8) && (myPosition.getColumn() - i >= 1) && !illegalMove; i++) {
+            potentialPosition = new ChessPosition(myPosition.getRow() + i, myPosition.getColumn() - i);
+            if (legalMove(potentialPosition, board)) {
+                moves.add(new ChessMove(myPosition, potentialPosition, null));
+                if (board.containsEnemyPiece(potentialPosition, this.getColor())) {
                     illegalMove = true;
-            }
-        }
-
-        //iterate diagonally down right
-        illegalMove = false;
-        for (int row = myPosition.getRow(); row >= 1 && !illegalMove; row--) {
-            for (int col = myPosition.getColumn(); col <= 8 && !illegalMove; col++) {
-                potentialPosition = new ChessPosition(row, col);
-                if (legalMove(potentialPosition, board)) {
-                    moves.add(new ChessMove(myPosition, potentialPosition, null));
                 }
-                else
-                    illegalMove = true;
             }
+            else
+                illegalMove = true;
         }
 
         //---------------------Rook type movements ----------------------
@@ -80,6 +83,9 @@ public class QueenMovesCalculator extends PieceMovesCalculator {
             if (legalMove(potentialPosition, board)) {
                 ChessMove move = new ChessMove(myPosition, potentialPosition, null);
                 moves.add(move);
+                if (board.containsEnemyPiece(potentialPosition, this.getColor())) {
+                    illegalMove = true;
+                }
             }
             else
                 illegalMove = true;
@@ -91,21 +97,14 @@ public class QueenMovesCalculator extends PieceMovesCalculator {
             if (legalMove(potentialPosition, board)) {
                 ChessMove move = new ChessMove(myPosition,potentialPosition, null);
                 moves.add(move);
+                if (board.containsEnemyPiece(potentialPosition, this.getColor())) {
+                    illegalMove = true;
+                }
             }
             else
                 illegalMove = true;
         }
-        // Search up
-        illegalMove = false;
-        for (int row = myPosition.getRow() + 1; row <= 8 && !illegalMove; row++) {
-            potentialPosition = new ChessPosition(row, myPosition.getColumn());
-            if (legalMove(potentialPosition, board)) {
-                ChessMove move = new ChessMove(myPosition, potentialPosition, null);
-                moves.add(move);
-            }
-            else
-                illegalMove = true;
-        }
+
         // Search down
         illegalMove = false;
         for (int row = myPosition.getRow() - 1; row >= 1 && !illegalMove; row--) {
@@ -113,8 +112,26 @@ public class QueenMovesCalculator extends PieceMovesCalculator {
             if (legalMove(potentialPosition, board)) {
                 ChessMove move = new ChessMove(myPosition, potentialPosition, null);
                 moves.add(move);
+                if (board.containsEnemyPiece(potentialPosition, this.getColor())) {
+                    illegalMove = true;
+                }
             }
             else illegalMove = true;
+        }
+
+        // Search up
+        illegalMove = false;
+        for (int row = myPosition.getRow() + 1; row <= 8 && !illegalMove; row++) {
+            potentialPosition = new ChessPosition(row, myPosition.getColumn());
+            if (legalMove(potentialPosition, board)) {
+                ChessMove move = new ChessMove(myPosition, potentialPosition, null);
+                moves.add(move);
+                if (board.containsEnemyPiece(potentialPosition, this.getColor())) {
+                    illegalMove = true;
+                }
+            }
+            else
+                illegalMove = true;
         }
 
         return moves;

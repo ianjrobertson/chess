@@ -36,7 +36,7 @@ public class ChessBoard {
         this.board = new ChessPiece[8][8];
         this.teamColor = ChessGame.TeamColor.WHITE;
         this.otherTeamColor = ChessGame.TeamColor.BLACK;
-        resetBoard();
+
         //Maybe call resetBoard() here to make it the default board.
     }
 
@@ -82,13 +82,17 @@ public class ChessBoard {
         return getPiece(position) != null;
     }
 
-    public boolean containsEnemyPiece(ChessPosition position) {
-        return (this.containsPiece(position) && this.getPiece(position).getTeamColor() != this.getTeamColor()); }
+    public boolean containsEnemyPiece(ChessPosition position, ChessGame.TeamColor color) {
+        if (containsPiece(position)) {
+            return (this.getPiece(position).getTeamColor() != color);
+        }
+        return false;
+    }
 
-    /**
-     * Sets the board to the default starting board
-     * (How the game of chess normally starts)
-     */
+        /**
+         * Sets the board to the default starting board
+         * (How the game of chess normally starts)
+         */
     public void resetBoard() {
         //Start by looping through row 2 and row 7 to set pawns.
         for (int col = 1; col <= 8; col++)
