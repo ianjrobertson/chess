@@ -17,50 +17,50 @@ public class KnightMovesCalculator extends PieceMovesCalculator {
         int myCol = myPosition.getColumn();
         int myRow = myPosition.getRow();
 
-        if (inBounds(myRow + 3, myCol + 1)) {
-            potentialPosition = new ChessPosition(myRow + 3, myCol + 1);
+        if (inBounds(myRow + 2, myCol + 1)) {
+            potentialPosition = new ChessPosition(myRow + 2, myCol + 1);
             if (legalMove(potentialPosition, board)) {
                 moves.add(new ChessMove(myPosition, potentialPosition, null));
             }
         }
-        else if (inBounds(myRow + 1, myCol + 3)) {
-            potentialPosition = new ChessPosition(myRow + 1, myCol + 3);
+        if (inBounds(myRow + 1, myCol + 2)) {
+            potentialPosition = new ChessPosition(myRow + 1, myCol + 2);
             if (legalMove(potentialPosition, board)) {
                 moves.add(new ChessMove(myPosition, potentialPosition, null));
             }
         }
-        else if (inBounds(myRow - 1, myCol + 3)) {
-            potentialPosition = new ChessPosition(myRow - 1, myCol + 3);
+        if (inBounds(myRow - 1, myCol + 2)) {
+            potentialPosition = new ChessPosition(myRow - 1, myCol + 2);
             if (legalMove(potentialPosition, board)) {
                 moves.add(new ChessMove(myPosition, potentialPosition, null));
             }
         }
-        else if (inBounds(myRow - 3, myCol + 1)) {
-            potentialPosition = new ChessPosition(myRow - 3, myCol + 1);
+        if (inBounds(myRow - 2, myCol + 1)) {
+            potentialPosition = new ChessPosition(myRow - 2, myCol + 1);
             if (legalMove(potentialPosition, board)) {
                 moves.add(new ChessMove(myPosition, potentialPosition, null));
             }
         }
-        else if (inBounds(myRow - 3, myCol - 1)) {
-            potentialPosition = new ChessPosition(myRow - 3, myCol - 1);
+        if (inBounds(myRow - 2, myCol - 1)) {
+            potentialPosition = new ChessPosition(myRow - 2, myCol - 1);
             if (legalMove(potentialPosition, board)) {
                 moves.add(new ChessMove(myPosition, potentialPosition, null));
             }
         }
-        else if (inBounds(myRow - 1, myCol - 3)) {
-            potentialPosition = new ChessPosition(myRow - 1, myCol - 3);
+        if (inBounds(myRow - 1, myCol - 2)) {
+            potentialPosition = new ChessPosition(myRow - 1, myCol - 2);
             if (legalMove(potentialPosition, board)) {
                 moves.add(new ChessMove(myPosition, potentialPosition, null));
             }
         }
-        else if (inBounds(myRow + 1, myCol - 3)) {
-            potentialPosition = new ChessPosition(myRow + 1, myCol - 3);
+        if (inBounds(myRow + 1, myCol - 2)) {
+            potentialPosition = new ChessPosition(myRow + 1, myCol - 2);
             if (legalMove(potentialPosition, board)) {
                 moves.add(new ChessMove(myPosition, potentialPosition, null));
             }
         }
-        else if (inBounds(myRow + 3, myCol - 1)) {
-            potentialPosition = new ChessPosition(myRow + 3, myCol - 1);
+        if (inBounds(myRow + 2, myCol - 1)) {
+            potentialPosition = new ChessPosition(myRow + 2, myCol - 1);
             if (legalMove(potentialPosition, board)) {
                 moves.add(new ChessMove(myPosition, potentialPosition, null));
             }

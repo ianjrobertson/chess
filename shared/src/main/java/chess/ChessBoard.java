@@ -22,13 +22,13 @@ public class ChessBoard {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ChessBoard that = (ChessBoard) o;
-        return Arrays.equals(board, that.board) && teamColor == that.teamColor && otherTeamColor == that.otherTeamColor;
+        return Arrays.deepEquals(board, that.board) && teamColor == that.teamColor && otherTeamColor == that.otherTeamColor;
     }
 
     @Override
     public int hashCode() {
         int result = Objects.hash(teamColor, otherTeamColor);
-        result = 31 * result + Arrays.hashCode(board);
+        result = 31 * result + Arrays.deepHashCode(board);
         return result;
     }
 
