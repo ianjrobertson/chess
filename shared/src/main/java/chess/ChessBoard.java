@@ -1,6 +1,8 @@
 package chess;
 
 import javax.lang.model.type.NullType;
+import java.util.Arrays;
+import java.util.Objects;
 
 /**
  * A chessboard that can hold and rearrange chess pieces.
@@ -14,6 +16,22 @@ public class ChessBoard {
     private ChessPiece [][] board;
     private final ChessGame.TeamColor teamColor;
     private final ChessGame.TeamColor otherTeamColor;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ChessBoard that = (ChessBoard) o;
+        return Arrays.equals(board, that.board) && teamColor == that.teamColor && otherTeamColor == that.otherTeamColor;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Objects.hash(teamColor, otherTeamColor);
+        result = 31 * result + Arrays.hashCode(board);
+        return result;
+    }
+
     public ChessBoard() {
         this.board = new ChessPiece[8][8];
         this.teamColor = ChessGame.TeamColor.WHITE;
