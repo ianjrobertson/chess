@@ -55,4 +55,5 @@ public class ChessMove {
     public ChessPiece.PieceType getPromotionPiece() {
         return this.promotionPiece;
     }
+
 }

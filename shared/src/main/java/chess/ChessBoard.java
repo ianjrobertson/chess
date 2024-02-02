@@ -78,6 +78,20 @@ public class ChessBoard {
         return this.board[position.getRowIndex()][position.getColumnIndex()];
     }
 
+    public void movePiece(ChessMove move) {
+        if (move.getPromotionPiece() == null) { //If normal move.
+            ChessPiece tempPiece = getPiece(move.getStartPosition()); //do we need deep copy???
+            this.addPiece(move.getEndPosition(), tempPiece);
+            this.addPiece(move.getStartPosition(), null);
+        }
+        else { //If there is a promotion piece.
+            ChessGame.TeamColor teamColor = getPiece(move.getStartPosition()).getTeamColor();
+            this.addPiece(move.getEndPosition(), new ChessPiece(teamColor, move.getPromotionPiece()));
+            this.addPiece(move.getStartPosition(), null);
+
+        }
+    }
+
     public boolean containsPiece(ChessPosition position) {
         return getPiece(position) != null;
     }
