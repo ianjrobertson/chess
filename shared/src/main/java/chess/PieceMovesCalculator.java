@@ -14,10 +14,7 @@ public abstract class PieceMovesCalculator {
         //Might be good to call inbounds here. since a move that is out of bounds is never a legal move.
         if (!board.containsPiece(potentialPosition))
             return true;
-        else if (board.getPiece(potentialPosition).getTeamColor() != this.getColor())
-            return true;
-        else
-            return false;
+        else return board.getPiece(potentialPosition).getTeamColor() != this.getColor();
     }
 
     protected boolean inBounds(int row, int col) {
