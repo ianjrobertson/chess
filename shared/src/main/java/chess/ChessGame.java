@@ -10,7 +10,6 @@ import java.util.Collection;
  * signature of the existing methods.
  */
 public class ChessGame {
-
     private ChessBoard board;
     private ChessGame.TeamColor teamTurn;
     public ChessGame() {
@@ -68,8 +67,10 @@ public class ChessGame {
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
         // You can only make a move if it is your turn.
-            if (isValid(move) && isTurn(move))
+            if (isValid(move) && isTurn(move)) {
                 this.board.movePiece(move);
+                setTeamTurn(getOppositeColor(getTeamTurn()));
+            }
             else
                 throw new InvalidMoveException("Not a valid move");
     }
@@ -105,7 +106,7 @@ public class ChessGame {
         for (ChessPosition position : enemyTeamPositions) { //Iterate through enemy positions
             validMoves = validMoves(position); // assign temp variable to validMoves of enemyPosition;
             for (ChessMove enemyMove: validMoves)  { // Iterate through validMoves
-                if (enemyMove.getEndPosition() == kingPosition) //If the endPosition of an enemyMove is the kingposition return true;
+                if (enemyMove.getEndPosition().equals(kingPosition)) //If the endPosition of an enemyMove is the kingposition return true;
                     return true;
             }
         }
@@ -139,7 +140,7 @@ public class ChessGame {
             for (ChessPosition position: enemyTeamPositions) { //For all enemy pieces
                 validMoves = this.validMoves(position); //for all enemy valid moves
                 for (ChessMove enemyMove : validMoves) {
-                    if (kingMove.getEndPosition() == enemyMove.getEndPosition()) { //If the kingMoves end position is the same as an enemyMove end position
+                    if (kingMove.getEndPosition().equals(enemyMove.getEndPosition())) { //If the kingMoves end position is the same as an enemyMove end position
                         killMove = true;
                         break;
                     }

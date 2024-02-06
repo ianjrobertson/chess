@@ -16,7 +16,6 @@ public class ChessBoard {
     private final ChessPiece[][] board;
     private final ChessGame.TeamColor teamColor;
     private final ChessGame.TeamColor otherTeamColor;
-
     private ChessPosition whiteKingPosition;
     private ChessPosition blackKingPosition;
 
@@ -90,6 +89,10 @@ public class ChessBoard {
         this.board[position.getRowIndex()][position.getColumnIndex()] = piece;
     }
 
+    public void removePiece(ChessPosition position) {
+        this.board[position.getRowIndex()][position.getColumnIndex()] = null;
+    }
+
     private void setKingPosition(ChessGame.TeamColor teamColor, ChessPosition newPosition) {
         if (teamColor == ChessGame.TeamColor.WHITE)
             this.whiteKingPosition = newPosition;
@@ -120,12 +123,11 @@ public class ChessBoard {
         if (move.getPromotionPiece() == null) { //If normal move
             ChessPiece tempPiece = getPiece(move.getStartPosition()); //do we need deep copy???
             this.addPiece(move.getEndPosition(), tempPiece);
-            this.addPiece(move.getStartPosition(), null);
+            this.removePiece(move.getStartPosition());
         } else { //If there is a promotion piece.
             ChessGame.TeamColor teamColor = getPiece(move.getStartPosition()).getTeamColor();
             this.addPiece(move.getEndPosition(), new ChessPiece(teamColor, move.getPromotionPiece()));
-            this.addPiece(move.getStartPosition(), null);
-
+            this.removePiece(move.getStartPosition());
         }
     }
 

@@ -17,9 +17,11 @@ public class PawnMovesCalculator extends PieceMovesCalculator {
      * @return boolean of legality of move.
      */
     protected boolean legalMove(ChessPosition potentialPosition, ChessBoard board, boolean attackMove) {
-     if (attackMove)
+        if (!inBounds(potentialPosition.getRow(), potentialPosition.getColumn()))
+            return false;
+        if (attackMove)
              return board.containsEnemyPiece(potentialPosition, this.getColor());
-     return !board.containsPiece(potentialPosition);
+        return !board.containsPiece(potentialPosition);
     }
 
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {

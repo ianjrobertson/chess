@@ -12,6 +12,8 @@ public abstract class PieceMovesCalculator {
 
     protected boolean legalMove(ChessPosition potentialPosition, ChessBoard board){
         //Might be good to call inbounds here. since a move that is out of bounds is never a legal move.
+        if (!inBounds(potentialPosition.getRow(), potentialPosition.getColumn()))
+            return false;
         if (!board.containsPiece(potentialPosition))
             return true;
         else return board.getPiece(potentialPosition).getTeamColor() != this.getColor();
