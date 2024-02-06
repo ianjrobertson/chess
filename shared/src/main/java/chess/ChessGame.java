@@ -18,6 +18,14 @@ public class ChessGame {
     }
 
     /**
+     * Enum identifying the 2 possible teams in a chess game
+     */
+    public enum TeamColor {
+        WHITE,
+        BLACK
+    }
+
+    /**
      * @return Which team's turn it is
      */
     public TeamColor getTeamTurn() {
@@ -32,15 +40,6 @@ public class ChessGame {
     public void setTeamTurn(TeamColor team) {
         this.teamTurn = team;
     }
-
-    /**
-     * Enum identifying the 2 possible teams in a chess game
-     */
-    public enum TeamColor {
-        WHITE,
-        BLACK
-    }
-
     private ChessGame.TeamColor getOppositeColor(ChessGame.TeamColor color) {
         if (color == TeamColor.WHITE)
             return TeamColor.BLACK;
@@ -77,8 +76,17 @@ public class ChessGame {
 
     private boolean isValid(ChessMove move) {
         Collection<ChessMove> moves = validMoves(move.getStartPosition());
-        return moves.contains(move);
+        return moves.contains(move) && !leavesKingInDanger(move, this.getTeamTurn());
         // A king can't make a move that would allow it to be captured. hmmmmmmmmm So do we need to simulate the board with that move??2
+    }
+
+    private boolean leavesKingInDanger(ChessMove move, TeamColor color) {
+        ChessBoard copyBoard = new ChessBoard(this.board); //Deep Copy of ChessBoard
+        this.board.movePiece(move);
+        boolean stillInCheck = isInCheck(color);
+        setBoard(copyBoard); //sets the chessBoard back to the original board.
+
+        return stillInCheck;
     }
 
     private boolean isTurn(ChessMove move) {

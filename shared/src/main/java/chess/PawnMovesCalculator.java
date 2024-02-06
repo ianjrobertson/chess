@@ -127,7 +127,7 @@ public class PawnMovesCalculator extends PieceMovesCalculator {
             //attack move right
             potentialPosition  = new ChessPosition(myPosition.getRow() - 1, myPosition.getColumn() + 1);
             if (legalMove(potentialPosition, board,true )) {
-                if (myPosition.getRow() == 7) {
+                if (myPosition.getRow() == 2) {
                     moves.add(new ChessMove(myPosition, potentialPosition, ChessPiece.PieceType.ROOK));
                     moves.add(new ChessMove(myPosition, potentialPosition, ChessPiece.PieceType.BISHOP));
                     moves.add(new ChessMove(myPosition, potentialPosition, ChessPiece.PieceType.KNIGHT));

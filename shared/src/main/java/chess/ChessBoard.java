@@ -27,6 +27,22 @@ public class ChessBoard {
         this.blackKingPosition = null;
     }
 
+    /**
+     * Copy Constructor
+     * @param copy
+     */
+    public ChessBoard(ChessBoard copy) {
+        this.teamColor = copy.teamColor;
+        this.otherTeamColor = copy.otherTeamColor;
+        this.whiteKingPosition = copy.whiteKingPosition;
+        this.blackKingPosition = copy.blackKingPosition;
+
+        this.board = new ChessPiece[8][8];
+        for (int row = 0; row < 8; row++) {
+            System.arraycopy(copy.board[row], 0, this.board[row], 0, 8);
+        }
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
