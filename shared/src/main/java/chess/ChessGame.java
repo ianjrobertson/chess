@@ -2,6 +2,7 @@ package chess;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 
 /**
  * For a class that can manage a chess game, making moves on a board
@@ -55,7 +56,57 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
-        return this.board.getPiece(startPosition).pieceMoves(board,startPosition);
+        TeamColor teamColor = this.board.getPiece(startPosition).getTeamColor();
+        if (this.board.getPiece(startPosition) == null)
+            return null;
+        Collection<ChessMove> moves = this.board.getPiece(startPosition).pieceMoves(board,startPosition);
+        Iterator<ChessMove> iterator = moves.iterator();
+
+        while (iterator.hasNext()) {
+            boolean kingInDanger = false;
+            ChessMove move = iterator.next(); //update the move
+            ChessBoard copyBoard = new ChessBoard(this.board); //Deep Copy of ChessBoard
+            this.board.movePiece(move); //make the move
+
+            //See if the King is in Check
+            ChessPosition kingPosition = this.board.getKingPosition(teamColor);
+            Collection<ChessPosition> enemyTeamPositions = this.board.getTeamPositions(getOppositeColor(teamColor)); // list of enemy positions
+            Collection<ChessMove> validMoves; //temp variable of validMoves given enemyPositions
+
+            for (ChessPosition position : enemyTeamPositions) { //Iterate through enemy positions
+                validMoves = this.board.getPiece(position).pieceMoves(this.board, position); // assign temp variable to validMoves of enemyPosition;
+                for (ChessMove enemyMove: validMoves)  { // Iterate through validMoves
+                    if (enemyMove.getEndPosition().equals(kingPosition)) //If the endPosition of an enemyMove is the kingposition return true;
+                        kingInDanger = true;
+                }
+            }
+
+            if (kingInDanger) {
+                iterator.remove();
+            }
+
+            setBoard(copyBoard); //sets the chessBoard back to the original board.
+        }
+
+        return moves;
+    }
+
+    /**
+     * private Collection<ChessMove> removeInvalidMoves(Collection<ChessMove> moves) {
+     *         Iterator<ChessMove> iterator = moves.iterator();
+     *         while(iterator.hasNext()) {
+     *             ChessMove potentialMove = iterator.next();
+     *             if (leavesKingInDanger(potentialMove, getTeamTurn())) {
+     *                 iterator.remove();
+     *             }
+     *         }
+     *         return moves;
+     *     }
+     */
+
+    private boolean isValid(ChessMove move) {
+        Collection<ChessMove> moves = validMoves(move.getStartPosition());
+        return moves.contains(move) && !leavesKingInDanger(move, this.getTeamTurn());
     }
 
     /**
@@ -72,12 +123,6 @@ public class ChessGame {
             }
             else
                 throw new InvalidMoveException("Not a valid move");
-    }
-
-    private boolean isValid(ChessMove move) {
-        Collection<ChessMove> moves = validMoves(move.getStartPosition());
-        return moves.contains(move) && !leavesKingInDanger(move, this.getTeamTurn());
-        // A king can't make a move that would allow it to be captured. hmmmmmmmmm So do we need to simulate the board with that move??2
     }
 
     private boolean leavesKingInDanger(ChessMove move, TeamColor color) {
@@ -100,13 +145,6 @@ public class ChessGame {
      * @return True if the specified team is in check
      */
     public boolean isInCheck(TeamColor teamColor) {
-        // So given a teamColor, we need to return the position of that teams king.
-        // It would make the most sense to have that be a function of a chessBoard. A chessBoard knows where its Kings are.
-        // In check means that the current posistion of the king is a valid move for an enemy piece.
-        // So we load the position of the king.color == teamColor
-        // Then we iterate through the valid moves for all enemy pieces on the board.
-        // We just need to check if the king position is contained in the validMoves of any piece on the board.
-
         ChessPosition kingPosition = this.board.getKingPosition(teamColor);
         Collection<ChessPosition> enemyTeamPositions = this.board.getTeamPositions(getOppositeColor(teamColor)); // list of enemy positions
         Collection<ChessMove> validMoves; //temp variable of validMoves given enemyPositions
@@ -118,7 +156,6 @@ public class ChessGame {
                     return true;
             }
         }
-
         return false;
     }
 
@@ -129,35 +166,18 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-        // So, I could simulate a chessBoard. If for every valid move a king makes, He is still in check.
-        // A problem is My check function tests the current board.
-        // I could make a new ChessBoard for every potential Position of the King.
-        // Move the King to that potentialPosition.
-        // If the King is not in check in that position, return false.
-        // If I iterate through all the ChessBoards, and the King is in check for all of them.
-        // The king is in checkmate.
+        Collection<ChessPosition> teamPositions = this.board.getTeamPositions(teamColor); // All team Positions
+        Collection<ChessMove> validMoves;
 
-        ChessPosition kingPosition = this.board.getKingPosition(teamColor);
-        Collection<ChessMove> kingMoves = validMoves(kingPosition);
-        Collection<ChessPosition> enemyTeamPositions = this.board.getTeamPositions(getOppositeColor(teamColor)); // list of enemy positions
-        Collection<ChessMove> validMoves; //temp variable of validMoves given enemyPositions
-        boolean killMove;
-
-        for (ChessMove kingMove: kingMoves) { // Iterate through valid Moves a king can make.
-            killMove = false;
-            for (ChessPosition position: enemyTeamPositions) { //For all enemy pieces
-                validMoves = this.validMoves(position); //for all enemy valid moves
-                for (ChessMove enemyMove : validMoves) {
-                    if (kingMove.getEndPosition().equals(enemyMove.getEndPosition())) { //If the kingMoves end position is the same as an enemyMove end position
-                        killMove = true;
-                        break;
-                    }
+        for (ChessPosition teamPosition: teamPositions) { //For all team positions
+            validMoves = this.validMoves(teamPosition); //Generate a list of their valid moves
+            for (ChessMove validMove: validMoves) { //For each validMove
+                if (!leavesKingInDanger(validMove, teamColor)) { // Simulate the move and see if it leaves the king in Check
+                    return false; //If the move takes the king out of check, Not in checkMate
                 }
             }
-            if (!killMove) //If we didn't find an enemy move that would place the king in check for the given kingMove.
-                return false; // The king is not in CheckMate
         }
-        return true; //If we iterated through all the possible kingMoves and found a killMove in each one, the king is in CheckMate
+        return true; //If each move left the king in Check, in CheckMate.
     }
 
     /**
@@ -168,15 +188,22 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
-        //Given a teamColor, we look at the positions of all their pieces
-        // If The validMoves collection length is greater than 0, we return false.
-        //If we make it through all the pieces, return true.
-        Collection<ChessPosition> teamPositions = this.board.getTeamPositions(teamColor);
-        for (ChessPosition position : teamPositions) {
-            if (!this.validMoves(position).isEmpty()) //If the validMoves for that piece is not empty
-                return false;
+        //so... if the team is not in check and it is their turn.
+        // but for every validMove, they are in check.
+        // We have a Stalemate.
+        if (this.getTeamTurn() == teamColor && !isInCheck(teamColor)) { // If it is their turn and they are not in check
+            Collection<ChessPosition> teamPositions = this.board.getTeamPositions(teamColor);
+            Collection<ChessMove> validMoves;
+            for (ChessPosition position : teamPositions) {
+                validMoves = this.validMoves(position);
+                for (ChessMove move: validMoves) {
+                    if (!leavesKingInDanger(move, teamColor))
+                        return false; // If the move doesn't result in a check. not in stalemate.
+                }
+            }
+            return true; //If there are no valid moves, or every valid move results in a check.
         }
-        return true; //Iterated through all pieces, and none of the pieces had a valid move
+        return false; //If its not the teams turn or the team is in check.
     }
 
     /**
