@@ -2,15 +2,11 @@ package dataAccess;
 
 import model.AuthData;
 
+import javax.xml.crypto.Data;
 import java.util.HashMap;
 import java.util.UUID;
 
 public class MemoryAuthDAO implements AuthDAO{
-
-    //Need to store a map of the auth tokens
-    //Need to have function that creates an authToken. Maybe have a private helper function that adds it to the database.
-
-    //A map of authToken strings to AuthData objects.
     private static final HashMap<String, AuthData> authDataMap = new HashMap<>();
     @Override
     public void clear() {
@@ -28,7 +24,10 @@ public class MemoryAuthDAO implements AuthDAO{
         return authDataMap.containsKey(authToken);
     }
     @Override
-    public void deleteAuth(String authToken) {
+    public void deleteAuth(String authToken) throws DataAccessException {
+        if (!authDataMap.containsKey(authToken)) {
+            throw new DataAccessException("Unknown authToken");
+        }
         authDataMap.remove(authToken);
     }
 
@@ -39,5 +38,13 @@ public class MemoryAuthDAO implements AuthDAO{
     @Override
     public AuthData verifyAuth(String authToken) {
             return authDataMap.getOrDefault(authToken, null); //If the given authToken maps to a authData object, return the object else return null
+    }
+
+    @Override
+    public void insertAuth(AuthData auth) throws DataAccessException {
+        if (authDataMap.containsKey(auth.authToken())) {
+            throw new DataAccessException("authToken already exists");
+        }
+        authDataMap.put(auth.authToken(), auth);
     }
 }
