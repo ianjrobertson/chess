@@ -10,7 +10,7 @@ public class LoginService {
         MemoryUserDAO userDAO= new MemoryUserDAO();
         UserData u = userDAO.getUser(r.username()); // try to get the username from memory
         if (userDAO.verifyUser(r.username(), r.password())) { //verify the username and password
-            throw new RuntimeException("Error: wrong password");
+            throw new DataAccessException("Error: unauthorized");
         }
         MemoryAuthDAO authDAO = new MemoryAuthDAO();
         String auth = authDAO.createAuth(r.username()); // generate a new auth and insert into mem

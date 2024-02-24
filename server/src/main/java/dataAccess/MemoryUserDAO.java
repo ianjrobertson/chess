@@ -32,7 +32,7 @@ public class MemoryUserDAO implements UserDAO {
     @Override
     public void insertUser(UserData u) throws DataAccessException {
         if (userDataMap.containsKey(u.username()))
-            throw new DataAccessException("User already exists: " + u.username());
+            throw new DataAccessException("Error: already taken");
         userDataMap.put(u.username(), u);
     }
 
