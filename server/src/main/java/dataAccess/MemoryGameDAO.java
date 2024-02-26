@@ -30,9 +30,6 @@ public class MemoryGameDAO implements GameDAO{
         return nextGameID++;
     }
 
-
-
-
     @Override
     public GameData getGame(int gameID) throws DataAccessException {
         if (!gameDataMap.containsKey(gameID)) {
@@ -53,6 +50,7 @@ public class MemoryGameDAO implements GameDAO{
 
     @Override
     public void joinGame() {
-
+        // So we need to take the username and If they are a black player or white player
+        //Then we are able to update the GameData object to reflect the players.
     }
 }
