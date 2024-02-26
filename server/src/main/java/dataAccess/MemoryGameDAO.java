@@ -1,5 +1,6 @@
 package dataAccess;
 
+import chess.ChessGame;
 import model.GameData;
 
 import java.util.Collection;
@@ -7,6 +8,7 @@ import java.util.HashMap;
 
 public class MemoryGameDAO implements GameDAO{
     private static HashMap<Integer, GameData> gameDataMap = new HashMap<Integer, GameData>();
+    private static int nextGameID = 1;
 
     @Override
     public void clear() {
@@ -14,10 +16,21 @@ public class MemoryGameDAO implements GameDAO{
     }
 
     @Override
-    public int createGame(GameData g) {
+    public void insertGame(GameData g) throws DataAccessException {
+        if (g == null) {
+            throw new DataAccessException("Error: bad request");
+        }
         gameDataMap.put(g.gameID(), g);
-        return g.gameID();
     }
+
+    @Override
+    public int createGame(String gameName) throws DataAccessException {
+        GameData gameData = new GameData(nextGameID, null, null, gameName, new ChessGame());
+        insertGame(gameData);
+        return nextGameID++;
+    }
+
+
 
 
     @Override
