@@ -1,12 +1,17 @@
 package service;
 
+import dataAccess.DataAccessException;
+import dataAccess.MemoryAuthDAO;
 import dataAccess.MemoryGameDAO;
+import model.AuthData;
 
 public class ListGamesService {
-    public ListGamesResponse listGames(ListGamesRequest r) {
+    public ListGamesResponse listGames(ListGamesRequest r) throws DataAccessException {
         MemoryGameDAO memoryGameDAO = new MemoryGameDAO();
-        //verify the authtoken
-        //Return the list of all the games.
-        //I think this one will be pretty easy
+        MemoryAuthDAO memoryAuthDAO = new MemoryAuthDAO();
+        if (memoryAuthDAO.verifyAuth(r.authToken()) == null) {
+            throw new DataAccessException("Error: unauthorized");
+        }
+        return new ListGamesResponse(memoryGameDAO.listGames());
     }
 }
