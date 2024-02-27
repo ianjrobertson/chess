@@ -33,7 +33,7 @@ public class MemoryGameDAO implements GameDAO{
     @Override
     public GameData getGame(int gameID) throws DataAccessException {
         if (!gameDataMap.containsKey(gameID)) {
-            throw new DataAccessException("Unknown gameID:" + gameID);
+            throw new DataAccessException("Error: bad request");
         }
         return gameDataMap.get(gameID);
     }
@@ -49,21 +49,27 @@ public class MemoryGameDAO implements GameDAO{
     }
 
     @Override
-    public void joinGame(int gameID, String username, boolean isWhite) {
+    public void joinGame(int gameID, String username, ChessGame.TeamColor playerColor) throws DataAccessException {
         // So we need to take the username and If they are a black player or white player
         //Then we are able to update the GameData object to reflect the players.
 
-        if (isWhite) { //username recieved is white
-            GameData updatedGameData = new GameData(gameID, username, gameDataMap.get(gameID).blackUsername(),
-                    gameDataMap.get(gameID).gameName(), gameDataMap.get(gameID).game());
+        if (playerColor == ChessGame.TeamColor.WHITE) { //username recieved is white
+            if (this.getGame(gameID).whiteUsername() != null) {
+                throw new DataAccessException("Error: already taken");
+            }
+            GameData updatedGameData = new GameData(gameID, username, this.getGame(gameID).blackUsername(),
+                    this.getGame(gameID).gameName(), this.getGame(gameID).game());
+            this.insertGame(updatedGameData);
+
         }
         else { //username recieve is black
-            GameData updatedGameData = new GameData(gameID, gameDataMap.get(gameID).whiteUsername(), username,
-                    gameDataMap.get(gameID).gameName(), gameDataMap.get(gameID).game());
+            if (this.getGame(gameID).blackUsername() != null) {
+                throw new DataAccessException("Error: already taken");
+            }
+            GameData updatedGameData = new GameData(gameID, this.getGame(gameID).whiteUsername(), username,
+                    this.getGame(gameID).gameName(), this.getGame(gameID).game());
+            this.insertGame(updatedGameData);
         }
-
-        //TODO throw error if gameID is not found? if we just use the getGame() method, it will handle that
-        //TODO thats the only major error case to probably worry about.
 
     }
 }

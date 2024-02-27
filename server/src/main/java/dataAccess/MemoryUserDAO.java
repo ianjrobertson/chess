@@ -11,6 +11,9 @@ public class MemoryUserDAO implements UserDAO {
     }
     @Override
     public UserData createUser(String username, String password, String email) throws DataAccessException {
+        if (username == null || password == null || email == null) {
+            throw new DataAccessException("Error: bad request");
+        }
         UserData newUser = new UserData(username, password, email);
         this.insertUser(newUser);
         return newUser;
@@ -19,7 +22,7 @@ public class MemoryUserDAO implements UserDAO {
     @Override
     public UserData getUser(String username) throws DataAccessException {
         if (!userDataMap.containsKey(username)) {
-            throw new DataAccessException("Unknown user: " + username);
+            throw new DataAccessException("Error: unauthorized");
         }
         return userDataMap.get(username);
     }
