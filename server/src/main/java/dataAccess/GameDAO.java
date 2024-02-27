@@ -13,5 +13,5 @@ public interface GameDAO {
     GameData getGame(int gameID) throws DataAccessException;
     Collection<GameData> listGames();
     void updateGame();
-    void joinGame(int gameID, String username, boolean isWhite);
+    void joinGame(int gameID, String username, boolean isWhite) throws DataAccessException;
 }

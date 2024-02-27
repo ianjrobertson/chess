@@ -25,7 +25,7 @@ public class MemoryGameDAO implements GameDAO{
 
     @Override
     public int createGame(String gameName) throws DataAccessException {
-        GameData gameData = new GameData(nextGameID, null, null, gameName, new ChessGame());
+        GameData gameData = new GameData(nextGameID, "", "", gameName, new ChessGame());
         insertGame(gameData);
         return nextGameID++;
     }
@@ -49,21 +49,21 @@ public class MemoryGameDAO implements GameDAO{
     }
 
     @Override
-    public void joinGame(int gameID, String username, boolean isWhite) {
+    public void joinGame(int gameID, String username, boolean isWhite) throws DataAccessException {
         // So we need to take the username and If they are a black player or white player
         //Then we are able to update the GameData object to reflect the players.
 
         if (isWhite) { //username recieved is white
-            GameData updatedGameData = new GameData(gameID, username, gameDataMap.get(gameID).blackUsername(),
-                    gameDataMap.get(gameID).gameName(), gameDataMap.get(gameID).game());
+            GameData updatedGameData = new GameData(gameID, username, this.getGame(gameID).blackUsername(),
+                    this.getGame(gameID).gameName(), this.getGame(gameID).game());
+            this.insertGame(updatedGameData);
+
         }
         else { //username recieve is black
-            GameData updatedGameData = new GameData(gameID, gameDataMap.get(gameID).whiteUsername(), username,
-                    gameDataMap.get(gameID).gameName(), gameDataMap.get(gameID).game());
+            GameData updatedGameData = new GameData(gameID, this.getGame(gameID).whiteUsername(), username,
+                    this.getGame(gameID).gameName(), this.getGame(gameID).game());
+            this.insertGame(updatedGameData);
         }
-
-        //TODO throw error if gameID is not found? if we just use the getGame() method, it will handle that
-        //TODO thats the only major error case to probably worry about.
 
     }
 }
