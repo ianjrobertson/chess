@@ -49,8 +49,21 @@ public class MemoryGameDAO implements GameDAO{
     }
 
     @Override
-    public void joinGame() {
+    public void joinGame(int gameID, String username, boolean isWhite) {
         // So we need to take the username and If they are a black player or white player
         //Then we are able to update the GameData object to reflect the players.
+
+        if (isWhite) { //username recieved is white
+            GameData updatedGameData = new GameData(gameID, username, gameDataMap.get(gameID).blackUsername(),
+                    gameDataMap.get(gameID).gameName(), gameDataMap.get(gameID).game());
+        }
+        else { //username recieve is black
+            GameData updatedGameData = new GameData(gameID, gameDataMap.get(gameID).whiteUsername(), username,
+                    gameDataMap.get(gameID).gameName(), gameDataMap.get(gameID).game());
+        }
+
+        //TODO throw error if gameID is not found? if we just use the getGame() method, it will handle that
+        //TODO thats the only major error case to probably worry about.
+
     }
 }
