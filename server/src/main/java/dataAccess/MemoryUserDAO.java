@@ -39,6 +39,7 @@ public class MemoryUserDAO implements UserDAO {
         userDataMap.put(u.username(), u);
     }
 
+    /**
     @Override
     public void deleteUser(String username) throws DataAccessException{
         if (!userDataMap.containsKey(username)) {
@@ -46,4 +47,5 @@ public class MemoryUserDAO implements UserDAO {
         }
         userDataMap.remove(username);
     }
+    **/
 }

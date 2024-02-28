@@ -4,6 +4,8 @@ import dataAccess.DataAccessException;
 import dataAccess.MemoryAuthDAO;
 import dataAccess.MemoryUserDAO;
 import model.UserData;
+import service.ServiceRecords.LoginRequest;
+import service.ServiceRecords.LoginResponse;
 
 public class LoginService {
     public LoginResponse login(LoginRequest r) throws DataAccessException {

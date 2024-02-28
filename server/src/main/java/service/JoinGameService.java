@@ -6,6 +6,7 @@ import dataAccess.MemoryAuthDAO;
 import dataAccess.MemoryGameDAO;
 import model.AuthData;
 import model.GameData;
+import service.ServiceRecords.JoinGameRequest;
 
 public class JoinGameService {
     public void joinGame(String authToken, JoinGameRequest r) throws DataAccessException {

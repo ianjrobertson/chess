@@ -10,6 +10,6 @@ public interface UserDAO {
     UserData getUser(String username) throws DataAccessException;
     boolean verifyUser(String username, String password);
     void insertUser(UserData u) throws DataAccessException;
-    void deleteUser(String username) throws DataAccessException;
+    //void deleteUser(String username) throws DataAccessException;
 
 }

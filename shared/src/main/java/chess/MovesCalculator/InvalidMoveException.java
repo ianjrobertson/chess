@@ -1,4 +1,4 @@
-package chess;
+package chess.MovesCalculator;
 
 /**
  * Indicates an invalid move was made in a game

@@ -1,8 +1,12 @@
-package chess;
+package chess.MovesCalculator;
+
+import chess.ChessBoard;
+import chess.ChessGame;
+import chess.ChessMove;
+import chess.ChessPosition;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Queue;
 
 public class QueenMovesCalculator extends PieceMovesCalculator {
     public QueenMovesCalculator(ChessGame.TeamColor color) {

@@ -58,6 +58,7 @@ public class ChessBoard {
         return result;
     }
 
+    /**
     public ChessGame.TeamColor getTeamColor() {
         return this.teamColor;
     }
@@ -65,6 +66,7 @@ public class ChessBoard {
     public ChessGame.TeamColor getOtherTeamColor() {
         return this.otherTeamColor;
     }
+     **/
 
     public ChessPosition getKingPosition(ChessGame.TeamColor teamColor) {
 

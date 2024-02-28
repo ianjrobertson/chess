@@ -2,6 +2,7 @@ package service;
 
 import dataAccess.DataAccessException;
 import dataAccess.MemoryAuthDAO;
+import service.ServiceRecords.LogoutRequest;
 
 public class LogoutService {
     public void logout(LogoutRequest r) throws DataAccessException {

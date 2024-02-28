@@ -1,4 +1,4 @@
-package service;
+package service.ServiceRecords;
 
 public record RegisterResponse(String username, String authToken) {
 }

@@ -3,7 +3,8 @@ package service;
 import dataAccess.DataAccessException;
 import dataAccess.MemoryAuthDAO;
 import dataAccess.MemoryUserDAO;
-import model.UserData;
+import service.ServiceRecords.RegisterRequest;
+import service.ServiceRecords.RegisterResponse;
 
 public class RegisterService {
     public RegisterResponse register(RegisterRequest r) throws DataAccessException {

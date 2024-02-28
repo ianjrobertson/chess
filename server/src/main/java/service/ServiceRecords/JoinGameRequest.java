@@ -1,4 +1,4 @@
-package service;
+package service.ServiceRecords;
 
 import chess.ChessGame;
 

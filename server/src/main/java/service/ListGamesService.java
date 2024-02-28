@@ -3,7 +3,8 @@ package service;
 import dataAccess.DataAccessException;
 import dataAccess.MemoryAuthDAO;
 import dataAccess.MemoryGameDAO;
-import model.AuthData;
+import service.ServiceRecords.ListGamesRequest;
+import service.ServiceRecords.ListGamesResponse;
 
 public class ListGamesService {
     public ListGamesResponse listGames(ListGamesRequest r) throws DataAccessException {

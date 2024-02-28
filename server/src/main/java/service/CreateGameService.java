@@ -4,6 +4,8 @@ import dataAccess.DataAccessException;
 import dataAccess.MemoryAuthDAO;
 import dataAccess.MemoryGameDAO;
 import model.AuthData;
+import service.ServiceRecords.CreateGameRequest;
+import service.ServiceRecords.CreateGameResponse;
 
 public class CreateGameService {
     public CreateGameResponse createGame(String authToken, CreateGameRequest r) throws DataAccessException {
