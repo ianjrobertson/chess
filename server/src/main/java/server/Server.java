@@ -6,6 +6,8 @@ import service.*;
 import service.ServiceRecords.*;
 import spark.*;
 
+import javax.xml.crypto.Data;
+
 public class Server {
 
     private final ClearService clearService;
@@ -106,14 +108,7 @@ public class Server {
             return new Gson().toJson(loginResponse);
         }
         catch(DataAccessException d) {
-            ErrorResponse errorResponse = new ErrorResponse(d.getMessage());
-            if (d.getMessage().equals("Error: unauthorized")) {
-                res.status(401);
-            }
-            else {
-                res.status(500);
-            }
-            return new Gson().toJson(errorResponse);
+            return unauthorizedError(res, d);
         }
     }
 
@@ -154,14 +149,7 @@ public class Server {
             return new Gson().toJson(listGamesResponse);
         }
         catch(DataAccessException d) {
-            ErrorResponse errorResponse = new ErrorResponse(d.getMessage());
-            if (d.getMessage().equals("Error: unauthorized")) {
-                res.status(401);
-            }
-            else {
-                res.status(500);
-            }
-            return new Gson().toJson(errorResponse);
+            return unauthorizedError(res, d);
         }
     }
 
@@ -216,4 +204,17 @@ public class Server {
             return new Gson().toJson(errorResponse);
         }
     }
+
+    private Object unauthorizedError(Response res, DataAccessException d) {
+        ErrorResponse errorResponse = new ErrorResponse(d.getMessage());
+        if (d.getMessage().equals("Error: unauthorized")) {
+            res.status(401);
+        }
+        else {
+            res.status(500);
+        }
+        return new Gson().toJson(errorResponse);
+    }
 }
+
+
