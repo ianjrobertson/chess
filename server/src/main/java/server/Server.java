@@ -131,18 +131,14 @@ public class Server {
             return "{}";
         }
         catch (DataAccessException d) {
+            ErrorResponse errorResponse = new ErrorResponse(d.getMessage());
             if (d.getMessage().equals("Error: unauthorized")) {
-                ErrorResponse errorResponse = new ErrorResponse(d.getMessage());
-                //res.body(new Gson().toJson(errorResponse));
                 res.status(401);
-                return new Gson().toJson(errorResponse);
             }
             else {
-                ErrorResponse errorResponse = new ErrorResponse(d.getMessage());
-                //res.body(new Gson().toJson(errorResponse));
                 res.status(500);
-                return new Gson().toJson(errorResponse);
             }
+            return new Gson().toJson(errorResponse);
         }
     }
 
@@ -155,19 +151,14 @@ public class Server {
             return new Gson().toJson(listGamesResponse);
         }
         catch(DataAccessException d) {
+            ErrorResponse errorResponse = new ErrorResponse(d.getMessage());
             if (d.getMessage().equals("Error: unauthorized")) {
-                ErrorResponse errorResponse = new ErrorResponse(d.getMessage());
-                //res.body(new Gson().toJson(errorResponse));
                 res.status(401);
-                return new Gson().toJson(errorResponse);
             }
             else {
-                ErrorResponse errorResponse = new ErrorResponse(d.getMessage());
-                //res.body(new Gson().toJson(errorResponse));
                 res.status(500);
-                return new Gson().toJson(errorResponse);
             }
-
+            return new Gson().toJson(errorResponse);
         }
     }
 
