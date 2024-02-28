@@ -44,11 +44,6 @@ public class MemoryGameDAO implements GameDAO{
     }
 
     @Override
-    public void updateGame() {
-
-    }
-
-    @Override
     public void joinGame(int gameID, String username, ChessGame.TeamColor playerColor) throws DataAccessException {
         // So we need to take the username and If they are a black player or white player
         //Then we are able to update the GameData object to reflect the players.

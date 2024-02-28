@@ -1,6 +1,7 @@
 package serviceTests;
 
 import chess.ChessGame;
+import dataAccess.DataAccessException;
 import dataAccess.MemoryAuthDAO;
 import dataAccess.MemoryGameDAO;
 import dataAccess.MemoryUserDAO;
@@ -18,6 +19,8 @@ import java.util.Locale;
 
 import service.ClearService;
 import service.ListGamesService;
+import service.RegisterRequest;
+import service.RegisterService;
 
 public class serviceTests {
 
@@ -32,6 +35,15 @@ public class serviceTests {
     }
 
     public void registerPass() {
+        RegisterService registerService = new RegisterService();
+        try {
+            registerService.register(new RegisterRequest("username", "password", "email"));
+        }
+        catch (DataAccessException d) {
+
+        }
+
+
 
     }
 

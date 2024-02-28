@@ -18,10 +18,13 @@ public class MemoryAuthDAO implements AuthDAO{
         return authToken;
     }
 
+    /**
     @Override
     public boolean getAuth(String authToken) { //return if given authToken exists in the list.
         return authDataMap.containsKey(authToken);
     }
+     **/
+
     @Override
     public void deleteAuth(String authToken) throws DataAccessException {
         if (!authDataMap.containsKey(authToken)) {
@@ -39,6 +42,7 @@ public class MemoryAuthDAO implements AuthDAO{
             return authDataMap.getOrDefault(authToken, null); //If the given authToken maps to a authData object, return the object else return null
     }
 
+    /**
     @Override
     public void insertAuth(AuthData auth) throws DataAccessException {
         if (authDataMap.containsKey(auth.authToken())) {
@@ -46,4 +50,5 @@ public class MemoryAuthDAO implements AuthDAO{
         }
         authDataMap.put(auth.authToken(), auth);
     }
+    **/
 }
