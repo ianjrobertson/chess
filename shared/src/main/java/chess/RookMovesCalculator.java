@@ -82,3 +82,4 @@ public class RookMovesCalculator extends PieceMovesCalculator {
         return moves;
     }
 }
+

@@ -42,10 +42,7 @@ public class PawnMovesCalculator extends PieceMovesCalculator {
             else if (myPosition.getRow() == 7) { // Check promotion piece
                 potentialPosition = new ChessPosition(8, myPosition.getColumn());
                 if (legalMove(potentialPosition, board, false)) {
-                    moves.add(new ChessMove(myPosition, potentialPosition, ChessPiece.PieceType.ROOK));
-                    moves.add(new ChessMove(myPosition, potentialPosition, ChessPiece.PieceType.BISHOP));
-                    moves.add(new ChessMove(myPosition, potentialPosition, ChessPiece.PieceType.KNIGHT));
-                    moves.add(new ChessMove(myPosition, potentialPosition, ChessPiece.PieceType.QUEEN));
+                    this.addPromotionPieces(moves, myPosition, potentialPosition);
                 }
             }
             else {
@@ -59,10 +56,7 @@ public class PawnMovesCalculator extends PieceMovesCalculator {
             potentialPosition = new ChessPosition(myPosition.getRow() + 1, myPosition.getColumn() - 1);
             if (legalMove(potentialPosition, board, true)) {
                 if (myPosition.getRow() == 7) {
-                    moves.add(new ChessMove(myPosition, potentialPosition, ChessPiece.PieceType.ROOK));
-                    moves.add(new ChessMove(myPosition, potentialPosition, ChessPiece.PieceType.BISHOP));
-                    moves.add(new ChessMove(myPosition, potentialPosition, ChessPiece.PieceType.KNIGHT));
-                    moves.add(new ChessMove(myPosition, potentialPosition, ChessPiece.PieceType.QUEEN));
+                    this.addPromotionPieces(moves, myPosition, potentialPosition);
                 }
                 else
                     moves.add(new ChessMove(myPosition, potentialPosition, null));
@@ -72,10 +66,7 @@ public class PawnMovesCalculator extends PieceMovesCalculator {
             potentialPosition  = new ChessPosition(myPosition.getRow() + 1, myPosition.getColumn() + 1);
             if (legalMove(potentialPosition, board,true )) {
                 if (myPosition.getRow() == 7) {
-                    moves.add(new ChessMove(myPosition, potentialPosition, ChessPiece.PieceType.ROOK));
-                    moves.add(new ChessMove(myPosition, potentialPosition, ChessPiece.PieceType.BISHOP));
-                    moves.add(new ChessMove(myPosition, potentialPosition, ChessPiece.PieceType.KNIGHT));
-                    moves.add(new ChessMove(myPosition, potentialPosition, ChessPiece.PieceType.QUEEN));
+                    this.addPromotionPieces(moves, myPosition, potentialPosition);
                 }
                 else
                     moves.add(new ChessMove(myPosition, potentialPosition, null));
@@ -97,10 +88,7 @@ public class PawnMovesCalculator extends PieceMovesCalculator {
             else if (myPosition.getRow() == 2) { // Check promotion piece
                 potentialPosition = new ChessPosition(1, myPosition.getColumn());
                 if (legalMove(potentialPosition, board, false)) {
-                    moves.add(new ChessMove(myPosition, potentialPosition, ChessPiece.PieceType.ROOK));
-                    moves.add(new ChessMove(myPosition, potentialPosition, ChessPiece.PieceType.BISHOP));
-                    moves.add(new ChessMove(myPosition, potentialPosition, ChessPiece.PieceType.KNIGHT));
-                    moves.add(new ChessMove(myPosition, potentialPosition, ChessPiece.PieceType.QUEEN));                }
+                    this.addPromotionPieces(moves, myPosition, potentialPosition);               }
             }
             //standard forward move
             else {
@@ -115,10 +103,7 @@ public class PawnMovesCalculator extends PieceMovesCalculator {
             potentialPosition = new ChessPosition(myPosition.getRow() - 1, myPosition.getColumn() - 1);
             if (legalMove(potentialPosition, board, true)) {
                 if (myPosition.getRow() == 2) {
-                    moves.add(new ChessMove(myPosition, potentialPosition, ChessPiece.PieceType.ROOK));
-                    moves.add(new ChessMove(myPosition, potentialPosition, ChessPiece.PieceType.BISHOP));
-                    moves.add(new ChessMove(myPosition, potentialPosition, ChessPiece.PieceType.KNIGHT));
-                    moves.add(new ChessMove(myPosition, potentialPosition, ChessPiece.PieceType.QUEEN));
+                    this.addPromotionPieces(moves, myPosition, potentialPosition);
                 }
                 else
                     moves.add(new ChessMove(myPosition, potentialPosition, null));
@@ -128,10 +113,7 @@ public class PawnMovesCalculator extends PieceMovesCalculator {
             potentialPosition  = new ChessPosition(myPosition.getRow() - 1, myPosition.getColumn() + 1);
             if (legalMove(potentialPosition, board,true )) {
                 if (myPosition.getRow() == 2) {
-                    moves.add(new ChessMove(myPosition, potentialPosition, ChessPiece.PieceType.ROOK));
-                    moves.add(new ChessMove(myPosition, potentialPosition, ChessPiece.PieceType.BISHOP));
-                    moves.add(new ChessMove(myPosition, potentialPosition, ChessPiece.PieceType.KNIGHT));
-                    moves.add(new ChessMove(myPosition, potentialPosition, ChessPiece.PieceType.QUEEN));
+                    this.addPromotionPieces(moves, myPosition, potentialPosition);
                 }
                 else
                     moves.add(new ChessMove(myPosition, potentialPosition, null));
@@ -140,4 +122,13 @@ public class PawnMovesCalculator extends PieceMovesCalculator {
 
         return moves;
     }
+
+    private void addPromotionPieces(Collection<ChessMove> moves, ChessPosition myPosition, ChessPosition potentialPosition) {
+        moves.add(new ChessMove(myPosition, potentialPosition, ChessPiece.PieceType.ROOK));
+        moves.add(new ChessMove(myPosition, potentialPosition, ChessPiece.PieceType.BISHOP));
+        moves.add(new ChessMove(myPosition, potentialPosition, ChessPiece.PieceType.KNIGHT));
+        moves.add(new ChessMove(myPosition, potentialPosition, ChessPiece.PieceType.QUEEN));
+    }
+
 }
+
