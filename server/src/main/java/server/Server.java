@@ -5,8 +5,6 @@ import dataAccess.DataAccessException;
 import service.*;
 import spark.*;
 
-import java.util.SimpleTimeZone;
-
 public class Server {
 
     private final ClearService clearService;
