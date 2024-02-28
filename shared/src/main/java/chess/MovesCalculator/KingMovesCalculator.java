@@ -22,59 +22,47 @@ public class KingMovesCalculator extends PieceMovesCalculator {
 
         if (inBounds(myPosition.getRow() + 1, myPosition.getColumn())) {
             potentialPosition = new ChessPosition(myPosition.getRow() + 1, myPosition.getColumn());
-            if (legalMove(potentialPosition, board)) {
-                moves.add(new ChessMove(myPosition, potentialPosition, null));
-            }
+            determinePosition(myPosition, potentialPosition, moves, board);
         }
         if (inBounds(myPosition.getRow() + 1, myPosition.getColumn() + 1)) {
             potentialPosition = new ChessPosition(myPosition.getRow() + 1, myPosition.getColumn() + 1);
-            if (legalMove(potentialPosition, board)) {
-                moves.add(new ChessMove(myPosition, potentialPosition, null));
-            }
+            determinePosition(myPosition, potentialPosition, moves, board);
         }
         if (inBounds(myPosition.getRow(), myPosition.getColumn() + 1)) {
             potentialPosition = new ChessPosition(myPosition.getRow(), myPosition.getColumn() + 1);
-            if (legalMove(potentialPosition, board)) {
-                moves.add(new ChessMove(myPosition, potentialPosition, null));
-            }
+            determinePosition(myPosition, potentialPosition, moves, board);
         }
         if (inBounds(myPosition.getRow() - 1, myPosition.getColumn() + 1)) {
             potentialPosition = new ChessPosition(myPosition.getRow() - 1, myPosition.getColumn() + 1);
-            if (legalMove(potentialPosition, board)) {
-                moves.add(new ChessMove(myPosition, potentialPosition, null));
-            }
+            determinePosition(myPosition, potentialPosition, moves, board);
         }
         if (inBounds(myPosition.getRow() - 1, myPosition.getColumn())) {
             potentialPosition = new ChessPosition(myPosition.getRow() - 1, myPosition.getColumn());
-            if (legalMove(potentialPosition, board)) {
-                moves.add(new ChessMove(myPosition, potentialPosition, null));
-            }
+            determinePosition(myPosition, potentialPosition, moves, board);
         }
         if (inBounds(myPosition.getRow() - 1, myPosition.getColumn() - 1)) {
             potentialPosition = new ChessPosition(myPosition.getRow() - 1, myPosition.getColumn() - 1);
-            if (legalMove(potentialPosition, board)) {
-                moves.add(new ChessMove(myPosition, potentialPosition, null));
-            }
+            determinePosition(myPosition, potentialPosition, moves, board);
         }
         if (inBounds(myPosition.getRow() - 1, myPosition.getColumn() - 1)) {
             potentialPosition = new ChessPosition(myPosition.getRow() - 1, myPosition.getColumn() - 1);
-            if (legalMove(potentialPosition, board)) {
-                moves.add(new ChessMove(myPosition, potentialPosition, null));
-            }
+            determinePosition(myPosition, potentialPosition, moves, board);
         }
         if (inBounds(myPosition.getRow(), myPosition.getColumn() - 1)) {
             potentialPosition = new ChessPosition(myPosition.getRow(), myPosition.getColumn() - 1);
-            if (legalMove(potentialPosition, board)) {
-                moves.add(new ChessMove(myPosition, potentialPosition, null));
-            }
+            determinePosition(myPosition, potentialPosition, moves, board);
         }
         if (inBounds(myPosition.getRow() + 1, myPosition.getColumn() - 1)) {
             potentialPosition = new ChessPosition(myPosition.getRow() + 1, myPosition.getColumn() - 1);
-            if (legalMove(potentialPosition, board)) {
-                moves.add(new ChessMove(myPosition, potentialPosition, null));
-            }
+            determinePosition(myPosition, potentialPosition, moves, board);
         }
 
         return moves;
+    }
+
+    private void determinePosition(ChessPosition myPosition, ChessPosition potentialPosition, Collection<ChessMove> moves, ChessBoard board) {
+        if (legalMove(potentialPosition, board)) {
+            moves.add(new ChessMove(myPosition, potentialPosition, null));
+        }
     }
 }

@@ -30,61 +30,44 @@ public class RookMovesCalculator extends PieceMovesCalculator {
         //Can capture an enemy at the end of the line.
         //searching right
         for (int col = myPosition.getColumn() + 1; col <= 8 && !illegalMove; col++) {
-            potentialPosition = new ChessPosition(myPosition.getRow(), col);
-            if (legalMove(potentialPosition, board)) {
-                ChessMove move = new ChessMove(myPosition, potentialPosition, null);
-                moves.add(move);
-                if (board.containsEnemyPiece(potentialPosition, this.getColor())) {
-                    illegalMove = true;
-                }
-            }
-            else
-                illegalMove = true;
+            illegalMove = determineMove(myPosition, moves, board, illegalMove, myPosition.getRow(),col);
         }
         //searching left
         illegalMove = false;
         for (int col = myPosition.getColumn() - 1; col >= 1 && !illegalMove; col--) {
-            potentialPosition = new ChessPosition(myPosition.getRow(), col);
-            if (legalMove(potentialPosition, board)) {
-                ChessMove move = new ChessMove(myPosition,potentialPosition, null);
-                moves.add(move);
-                if (board.containsEnemyPiece(potentialPosition, this.getColor())) {
-                    illegalMove = true;
-                }
-            }
-            else
-                illegalMove = true;
+            illegalMove = determineMove(myPosition, moves, board, illegalMove, myPosition.getRow(), col);
         }
 
         // Search down
         illegalMove = false;
         for (int row = myPosition.getRow() - 1; row >= 1 && !illegalMove; row--) {
-            potentialPosition = new ChessPosition(row, myPosition.getColumn());
-            if (legalMove(potentialPosition, board)) {
-                ChessMove move = new ChessMove(myPosition, potentialPosition, null);
-                moves.add(move);
-                if (board.containsEnemyPiece(potentialPosition, this.getColor())) {
-                    illegalMove = true;
-                }
-            }
-            else illegalMove = true;
+            illegalMove = determineMove(myPosition, moves, board, illegalMove, row, myPosition.getColumn());
         }
 
         // Search up
         illegalMove = false;
         for (int row = myPosition.getRow() + 1; row <= 8 && !illegalMove; row++) {
-            potentialPosition = new ChessPosition(row, myPosition.getColumn());
-            if (legalMove(potentialPosition, board)) {
-                ChessMove move = new ChessMove(myPosition, potentialPosition, null);
-                moves.add(move);
-                if (board.containsEnemyPiece(potentialPosition, this.getColor())) {
-                    illegalMove = true;
-                }
-            }
-            else
-                illegalMove = true;
+           illegalMove = determineMove(myPosition, moves, board, illegalMove, row, myPosition.getColumn());
         }
         return moves;
     }
+
+    private boolean determineMove(ChessPosition myPosition, Collection<ChessMove> moves, ChessBoard board, boolean illegalMove, int row, int col) {
+        ChessPosition potentialPosition = new ChessPosition(row, col);
+        if (legalMove(potentialPosition, board)) {
+            ChessMove move = new ChessMove(myPosition, potentialPosition, null);
+            moves.add(move);
+            if (board.containsEnemyPiece(potentialPosition, this.getColor())) {
+                illegalMove = true;
+            }
+        }
+        else
+            illegalMove = true;
+
+        return illegalMove;
+    }
+
 }
+
+
 
