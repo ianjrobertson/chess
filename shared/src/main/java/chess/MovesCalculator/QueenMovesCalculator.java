@@ -18,6 +18,10 @@ public class QueenMovesCalculator extends PieceMovesCalculator {
         // The queen can do everything that a bishop and rook can do.
 
         //------------------Bishop type movements---------------
+        BishopMovesCalculator bishopMovesCalculator = new BishopMovesCalculator(this.getColor());
+        moves.addAll(bishopMovesCalculator.pieceMoves(board, myPosition));
+
+        /**
         ChessPosition potentialPosition;
         boolean illegalMove = false;
 
@@ -75,7 +79,14 @@ public class QueenMovesCalculator extends PieceMovesCalculator {
                 illegalMove = true;
         }
 
+        **/
+
         //---------------------Rook type movements ----------------------
+
+        RookMovesCalculator rookMovesCalculator = new RookMovesCalculator(this.getColor());
+        moves.addAll(rookMovesCalculator.pieceMoves(board, myPosition));
+
+        /**
 
         illegalMove = false; //illegal move flag
 
@@ -137,6 +148,8 @@ public class QueenMovesCalculator extends PieceMovesCalculator {
             else
                 illegalMove = true;
         }
+
+         **/
 
         return moves;
     }
