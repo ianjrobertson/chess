@@ -51,7 +51,7 @@ public class DatabaseGameDAO implements GameDAO{
 
     @Override
     public int createGame(String gameName) throws DataAccessException {
-        try (var preparedStatement = DatabaseManager.getConnection().prepareStatement("INSERT INTO game (gameName, chessGame), RETURN_GENERATED_KEYS")) {
+        try (var preparedStatement = DatabaseManager.getConnection().prepareStatement("INSERT INTO game (gameName, chessGame), VALUES(?, ?), RETURN_GENERATED_KEYS")) {
             preparedStatement.setString(1, gameName);
             preparedStatement.setString(2, new Gson().toJson(new ChessGame()));
             preparedStatement.executeUpdate();
@@ -65,7 +65,6 @@ public class DatabaseGameDAO implements GameDAO{
                     throw new DataAccessException("Something bad happened");
                 }
             }
-
         }
         catch (SQLException e) {
             throw new DataAccessException(e.getMessage());
@@ -132,7 +131,36 @@ public class DatabaseGameDAO implements GameDAO{
 
     @Override
     public void joinGame(int gameID, String username, ChessGame.TeamColor teamColor) throws DataAccessException {
+        try {
+            GameData gameData = this.getGame(gameID);
 
-
+            if (teamColor == ChessGame.TeamColor.WHITE) {
+                if (gameData.whiteUsername() != null) {
+                    throw new DataAccessException("Error: already taken");
+                }
+                else {
+                    try (var preparedStatement = DatabaseManager.getConnection().prepareStatement("UPDATE game SET whiteUsername = ? WHERE gameID = ?")) {
+                        preparedStatement.setString(1,username);
+                        preparedStatement.setInt(2,gameID);
+                        preparedStatement.executeUpdate();
+                    }
+                }
+            }
+            else { //assuming its not null...
+                if (gameData.blackUsername() != null) {
+                    throw new DataAccessException("Error: already taken");
+                }
+                else {
+                    try (var preparedStatement = DatabaseManager.getConnection().prepareStatement("UPDATE game SET blackUsername = ? WHERE gameID = ?")) {
+                        preparedStatement.setString(1,username);
+                        preparedStatement.setInt(2,gameID);
+                        preparedStatement.executeUpdate();
+                    }
+                }
+            }
+        }
+        catch (SQLException e) {
+            throw new DataAccessException(e.getMessage());
+        }
     }
 }
