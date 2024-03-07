@@ -2,6 +2,7 @@ package dataAccess;
 
 import model.AuthData;
 
+import javax.xml.crypto.Data;
 import java.sql.SQLException;
 import java.util.UUID;
 
@@ -48,12 +49,35 @@ public class DatabaseAuthDAO implements AuthDAO{
 
     @Override
     public void deleteAuth(String authToken) throws DataAccessException {
-
+        try (var preparedStatement = getConnection().prepareStatement("DELETE FROM auth WHERE authToken = ?")) {
+            preparedStatement.setString(1, authToken);
+            preparedStatement.executeUpdate();
+        }
+        catch (SQLException e) {
+            throw new DataAccessException(e.getMessage());
+        }
     }
 
     @Override
-    public AuthData verifyAuth(String authToken) {
-        return null;
+    public AuthData verifyAuth(String authToken) throws DataAccessException {
+        // Given an authData. If not .next() we can return null()
+        try (var preparedStatement = getConnection().prepareStatement("SELECT username FROM auth WHERE authToken = ?")) {
+            preparedStatement.setString(1, authToken);
+            preparedStatement.executeUpdate();
+
+            try (var resultset = preparedStatement.getResultSet()) {
+                if (resultset.next()) {
+                    String fetchedUsername = resultset.getString("username");
+                    return new AuthData(authToken, fetchedUsername);
+                }
+                else {
+                    return null;
+                }
+            }
+        }
+        catch (SQLException e) {
+            throw new DataAccessException(e.getMessage());
+        }
     }
 
     private final String[] createStatements = {
@@ -65,18 +89,5 @@ public class DatabaseAuthDAO implements AuthDAO{
             )
             """
     };
-
-    public void configureDatabase(String createStatement) throws DataAccessException {
-        DatabaseManager.createDatabase();
-        try (var conn = getConnection()) {
-            for (var statement: createStatements) {
-                try (var preparedStatement = conn.prepareStatement(statement)) {
-                    preparedStatement.executeUpdate();
-                }
-            }
-        } catch (SQLException ex) {
-            throw new DataAccessException(ex.getMessage());
-        }
-    }
 }
 
