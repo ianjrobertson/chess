@@ -7,6 +7,21 @@ import java.util.Collection;
 
 public class DatabaseGameDAO implements GameDAO{
 
+    private final String[] createStatements = {
+            """
+            CREATE TABLE IF NOT EXISTS  user (
+              `username` varchar(256) NOT NULL,
+              `password` varchar(256) NOT NULL,
+              `email`, varchar(256) NOT NULL
+              PRIMARY KEY (`username`)
+            )
+            """
+    };
+
+    public DatabaseGameDAO() throws DataAccessException {
+        DatabaseManager.configureDatabase(createStatements);
+    }
+
     public void clear() {
 
     }
