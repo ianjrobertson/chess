@@ -1,9 +1,7 @@
 package service;
 
 import chess.ChessGame;
-import dataAccess.DataAccessException;
-import dataAccess.MemoryAuthDAO;
-import dataAccess.MemoryGameDAO;
+import dataAccess.*;
 import model.AuthData;
 import model.GameData;
 import service.ServiceRecords.JoinGameRequest;
@@ -11,8 +9,8 @@ import service.ServiceRecords.JoinGameRequest;
 public class JoinGameService {
     public void joinGame(String authToken, JoinGameRequest r) throws DataAccessException {
         //verify the authToken
-        MemoryAuthDAO memoryAuthDAO = new MemoryAuthDAO();
-        AuthData authData = memoryAuthDAO.verifyAuth(authToken);
+        AuthDAO authDAO = new DatabaseAuthDAO();
+        AuthData authData = authDAO.verifyAuth(authToken);
         if (authData == null) {
             throw new DataAccessException("Error: unauthorized"); //Could refactor to throw this in MemoryAuthDAO
         }

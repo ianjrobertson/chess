@@ -9,6 +9,7 @@ import model.GameData;
 import javax.xml.crypto.Data;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -17,12 +18,12 @@ public class DatabaseGameDAO implements GameDAO{
     private final String[] createStatements = {
             """
             CREATE TABLE IF NOT EXISTS  game (
-              `gameID` int NOT NULL AUTO_INCREMENT,
-              `whiteUsername` varchar(256),
-              `blackUsername` varchar(256),
-              'gameName' varchar(256) NOT NULL,
-              'chessGame' JSON NOT NULL
-              PRIMARY KEY (`gameID`)
+              gameID int NOT NULL AUTO_INCREMENT,
+              whiteUsername varchar(256),
+              blackUsername varchar(256),
+              gameName varchar(256) NOT NULL,
+              chessGame JSON NOT NULL,
+              PRIMARY KEY (gameID)
             )
             """
     };
@@ -51,15 +52,13 @@ public class DatabaseGameDAO implements GameDAO{
 
     @Override
     public int createGame(String gameName) throws DataAccessException {
-        try (var preparedStatement = DatabaseManager.getConnection().prepareStatement("INSERT INTO game (gameName, chessGame), VALUES(?, ?), RETURN_GENERATED_KEYS")) {
+        try (var preparedStatement = DatabaseManager.getConnection().prepareStatement("INSERT INTO game (gameName, chessGame) VALUES(?, ?)", Statement.RETURN_GENERATED_KEYS)) {
             preparedStatement.setString(1, gameName);
             preparedStatement.setString(2, new Gson().toJson(new ChessGame()));
             preparedStatement.executeUpdate();
             try (var resultSet = preparedStatement.getGeneratedKeys()) {
-                var gameID = 0;
                 if (resultSet.next()) {
-                    gameID = resultSet.getInt(1); //returns the next gameID that was auto Incrememnted!
-                    return gameID;
+                    return resultSet.getInt(1); //returns the next gameID that was auto Incrememnted!
                 }
                 else {
                     throw new DataAccessException("Something bad happened");
@@ -75,7 +74,7 @@ public class DatabaseGameDAO implements GameDAO{
     public GameData getGame(int gameID) throws DataAccessException {
         try (var preparedStatement = DatabaseManager.getConnection().prepareStatement("SELECT gameID, whiteUsername, blackUsername, gameName, chessGame FROM game WHERE gameID = ?")) {
             preparedStatement.setInt(1, gameID);
-            preparedStatement.executeUpdate();
+            preparedStatement.executeQuery();
 
             try (var resultSet = preparedStatement.getResultSet()) {
                 if (resultSet.next()) {
@@ -100,7 +99,7 @@ public class DatabaseGameDAO implements GameDAO{
     public Collection<GameData> listGames() throws DataAccessException{
         var gameList = new ArrayList<GameData>();
         try (var preparedStatement = DatabaseManager.getConnection().prepareStatement("SELECT * FROM game")) {
-            preparedStatement.executeUpdate();
+            preparedStatement.executeQuery();
             try (var resultSet = preparedStatement.getResultSet()) {
                 while(resultSet.next())
                 {
@@ -119,10 +118,10 @@ public class DatabaseGameDAO implements GameDAO{
             int gameID = rs.getInt("gameID");
             String whiteUsername = rs.getString("whiteUsername");
             String blackUsername = rs.getString("blackUsername");
-            String chessName = rs.getString("chessName");
+            String gameName = rs.getString("gameName");
             ChessGame chessGame = new Gson().fromJson(rs.getString("chessGame"), ChessGame.class);
 
-            return new GameData(gameID, whiteUsername, blackUsername, chessName, chessGame);
+            return new GameData(gameID, whiteUsername, blackUsername, gameName, chessGame);
         }
         catch (SQLException e) {
             throw new DataAccessException(e.getMessage());

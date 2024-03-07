@@ -29,7 +29,7 @@ public class DatabaseAuthDAO implements AuthDAO{
 
     @Override
     public String createAuth(String username) throws DataAccessException {
-        try (var preparedStatement = getConnection().prepareStatement("INSERT INTO auth (username, auth), VALUES(?, ?)")) {
+        try (var preparedStatement = getConnection().prepareStatement("INSERT INTO auth (username, auth) VALUES(?, ?)")) {
             String authToken = generateAuth();
             preparedStatement.setString(1, username);
             preparedStatement.setString(2, authToken);
@@ -49,7 +49,7 @@ public class DatabaseAuthDAO implements AuthDAO{
 
     @Override
     public void deleteAuth(String authToken) throws DataAccessException {
-        try (var preparedStatement = getConnection().prepareStatement("DELETE FROM auth WHERE authToken = ?")) {
+        try (var preparedStatement = getConnection().prepareStatement("DELETE FROM auth WHERE auth = ?")) {
             preparedStatement.setString(1, authToken);
             preparedStatement.executeUpdate();
         }
@@ -61,9 +61,9 @@ public class DatabaseAuthDAO implements AuthDAO{
     @Override
     public AuthData verifyAuth(String authToken) throws DataAccessException {
         // Given an authData. If not .next() we can return null()
-        try (var preparedStatement = getConnection().prepareStatement("SELECT username FROM auth WHERE authToken = ?")) {
+        try (var preparedStatement = getConnection().prepareStatement("SELECT username FROM auth WHERE auth = ?")) {
             preparedStatement.setString(1, authToken);
-            preparedStatement.executeUpdate();
+            preparedStatement.executeQuery();
 
             try (var resultset = preparedStatement.getResultSet()) {
                 if (resultset.next()) {
@@ -83,9 +83,9 @@ public class DatabaseAuthDAO implements AuthDAO{
     private final String[] createStatements = {
             """
             CREATE TABLE IF NOT EXISTS  auth (
-              `username` varchar(256) NOT NULL,
-              `auth` varchar(256) NOT NULL,
-              PRIMARY KEY (`username`)
+              username varchar(256) NOT NULL,
+              auth varchar(256) NOT NULL,
+              PRIMARY KEY (username)
             )
             """
     };

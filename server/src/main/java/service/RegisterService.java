@@ -1,18 +1,16 @@
 package service;
 
-import dataAccess.DataAccessException;
-import dataAccess.MemoryAuthDAO;
-import dataAccess.MemoryUserDAO;
+import dataAccess.*;
 import service.ServiceRecords.RegisterRequest;
 import service.ServiceRecords.RegisterResponse;
 
 public class RegisterService {
     public RegisterResponse register(RegisterRequest r) throws DataAccessException {
-        MemoryUserDAO memoryUserDAO = new MemoryUserDAO();
-        MemoryAuthDAO memoryAuthDAO = new MemoryAuthDAO();
+        UserDAO userDAO = new DatabaseUserDAO();
+        AuthDAO authDAO = new DatabaseAuthDAO();
 
-        memoryUserDAO.createUser(r.username(), r.password(),r.email()); // try to create the user. If taken throws dataAccessException
-        String auth = memoryAuthDAO.createAuth(r.username());
+        userDAO.createUser(r.username(), r.password(),r.email()); // try to create the user. If taken throws dataAccessException
+        String auth = authDAO.createAuth(r.username());
 
         return new RegisterResponse(r.username(), auth);
 

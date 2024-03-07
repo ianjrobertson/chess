@@ -1,18 +1,16 @@
 package service;
 
-import dataAccess.DataAccessException;
-import dataAccess.MemoryAuthDAO;
-import dataAccess.MemoryGameDAO;
+import dataAccess.*;
 import service.ServiceRecords.ListGamesRequest;
 import service.ServiceRecords.ListGamesResponse;
 
 public class ListGamesService {
     public ListGamesResponse listGames(ListGamesRequest r) throws DataAccessException {
-        MemoryGameDAO memoryGameDAO = new MemoryGameDAO();
-        MemoryAuthDAO memoryAuthDAO = new MemoryAuthDAO();
-        if (memoryAuthDAO.verifyAuth(r.authToken()) == null) {
+        GameDAO gameDAO = new DatabaseGameDAO();
+        AuthDAO authDAO = new DatabaseAuthDAO();
+        if (authDAO.verifyAuth(r.authToken()) == null) {
             throw new DataAccessException("Error: unauthorized");
         }
-        return new ListGamesResponse(memoryGameDAO.listGames());
+        return new ListGamesResponse(gameDAO.listGames());
     }
 }

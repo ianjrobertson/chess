@@ -4,15 +4,16 @@ import dataAccess.*;
 
 public class ClearService {
 
-    public void clear() {
+    public void clear() throws DataAccessException {
         //Now we use the data access objects to clear everything.
         //Instantiate a Data Access object for each of types and call the static
-        UserDAO userDAO = new MemoryUserDAO();
-        userDAO.clear();
-        AuthDAO authDAO = new MemoryAuthDAO();
-        authDAO.clear();
-        GameDAO gameDAO = new MemoryGameDAO();
-        gameDAO.clear();
+            UserDAO userDAO = new DatabaseUserDAO();
+            userDAO.clear();
+            AuthDAO authDAO = new DatabaseAuthDAO();
+            authDAO.clear();
+            GameDAO gameDAO = new DatabaseGameDAO();
+            gameDAO.clear();
+
     }
 
 }

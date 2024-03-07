@@ -31,7 +31,7 @@ public class DatabaseUserDAO implements UserDAO{
 
     @Override
     public UserData createUser(String username, String password, String email) throws DataAccessException {
-        try (var preparedStatement = getConnection().prepareStatement("INSERT INTO user (username, password, email), Values(?, ?, ?)")) {
+        try (var preparedStatement = getConnection().prepareStatement("INSERT INTO user (username, password, email) VALUES(?, ?, ?)")) {
             BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
             String hashedPassword = encoder.encode(password);
             preparedStatement.setString(1, username);
@@ -50,7 +50,7 @@ public class DatabaseUserDAO implements UserDAO{
     public UserData getUser(String username) throws DataAccessException {
         try (var preparedStatement = getConnection().prepareStatement("SELECT username, password, email FROM user WHERE username = ?")) {
             preparedStatement.setString(1, username);
-            preparedStatement.executeUpdate();
+            preparedStatement.executeQuery();
 
             try (var resultSet = preparedStatement.getResultSet()) {
                 if (resultSet.next()) {
@@ -74,7 +74,7 @@ public class DatabaseUserDAO implements UserDAO{
     public boolean verifyUser(String username, String password) throws DataAccessException {
         try (var preparedStatement = getConnection().prepareStatement("SELECT password FROM user WHERE username = ?")) {
             preparedStatement.setString(1, username);
-            preparedStatement.executeUpdate(); //Retrieve the hashed password from the database.
+            preparedStatement.executeQuery(); //Retrieve the hashed password from the database.
             try (var resultSet = preparedStatement.getResultSet()) {
                 if (resultSet.next()) {
                     String fetchedPassword = resultSet.getString("password");
@@ -99,10 +99,10 @@ public class DatabaseUserDAO implements UserDAO{
     private final String[] createStatements = {
             """
             CREATE TABLE IF NOT EXISTS  user (
-              `username` varchar(256) NOT NULL,
-              `password` varchar(256) NOT NULL,
-              `email` varchar(256) NOT NULL
-              PRIMARY KEY (`username`)
+              username varchar(256) NOT NULL,
+              password varchar(256) NOT NULL,
+              email varchar(256) NOT NULL,
+              PRIMARY KEY (username)
             )
             """
     };

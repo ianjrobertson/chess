@@ -1,8 +1,6 @@
 package service;
 
-import dataAccess.DataAccessException;
-import dataAccess.MemoryAuthDAO;
-import dataAccess.MemoryGameDAO;
+import dataAccess.*;
 import model.AuthData;
 import service.ServiceRecords.CreateGameRequest;
 import service.ServiceRecords.CreateGameResponse;
@@ -13,12 +11,12 @@ public class CreateGameService {
         //verify the authToken
         //I don't even know if we need to verify that there is not a game with the same name
         //
-        MemoryAuthDAO memoryAuthDAO = new MemoryAuthDAO();
-        MemoryGameDAO memoryGameDAO = new MemoryGameDAO();
-        AuthData authData = memoryAuthDAO.verifyAuth(authToken);
+        AuthDAO authDAO = new DatabaseAuthDAO();
+        GameDAO gameDAO = new DatabaseGameDAO();
+        AuthData authData = authDAO.verifyAuth(authToken);
         if (authData == null) {
             throw new DataAccessException("Error: unauthorized");
         }
-        return new CreateGameResponse(memoryGameDAO.createGame(r.gameName()));
+        return new CreateGameResponse(gameDAO.createGame(r.gameName()));
     }
 }
