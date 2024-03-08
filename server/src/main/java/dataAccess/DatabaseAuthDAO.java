@@ -16,7 +16,7 @@ public class DatabaseAuthDAO implements AuthDAO{
 
     @Override
     public void clear() {
-        try (var preparedStatement = getConnection().prepareStatement("TRUNCATE TABLE auth")) {
+        try (var preparedStatement = getConnection().prepareStatement("DROP TABLE auth")) {
             preparedStatement.executeUpdate();
         }
         catch (DataAccessException d) {
@@ -51,7 +51,10 @@ public class DatabaseAuthDAO implements AuthDAO{
     public void deleteAuth(String authToken) throws DataAccessException {
         try (var preparedStatement = getConnection().prepareStatement("DELETE FROM auth WHERE auth = ?")) {
             preparedStatement.setString(1, authToken);
-            preparedStatement.executeUpdate();
+            int rowsAffected = preparedStatement.executeUpdate();
+            if (rowsAffected == 0) {
+                throw new DataAccessException("Error: unauthorized");
+            }
         }
         catch (SQLException e) {
             throw new DataAccessException(e.getMessage());
@@ -85,7 +88,7 @@ public class DatabaseAuthDAO implements AuthDAO{
             CREATE TABLE IF NOT EXISTS  auth (
               username varchar(256) NOT NULL,
               auth varchar(256) NOT NULL,
-              PRIMARY KEY (username)
+              PRIMARY KEY (auth)
             )
             """
     };

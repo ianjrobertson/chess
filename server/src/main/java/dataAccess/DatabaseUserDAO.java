@@ -18,7 +18,7 @@ public class DatabaseUserDAO implements UserDAO{
     }
     @Override
     public void clear() {
-        try (var preparedStatement = getConnection().prepareStatement("TRUNCATE TABLE user")) {
+        try (var preparedStatement = getConnection().prepareStatement("DROP TABLE user")) {
             preparedStatement.executeUpdate();
         }
         catch (DataAccessException d) {
@@ -31,6 +31,12 @@ public class DatabaseUserDAO implements UserDAO{
 
     @Override
     public UserData createUser(String username, String password, String email) throws DataAccessException {
+        if (username == null || password == null || email == null) {
+            throw new DataAccessException("Error: bad request");
+        }
+        if (userAlreadyExists(username)) {
+            throw new DataAccessException("Error: already taken");
+        }
         try (var preparedStatement = getConnection().prepareStatement("INSERT INTO user (username, password, email) VALUES(?, ?, ?)")) {
             BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
             String hashedPassword = encoder.encode(password);
@@ -61,7 +67,7 @@ public class DatabaseUserDAO implements UserDAO{
                     return new UserData(fetchedUsername, fetchedPassword, fetchedEmail);
                 }
                 else {
-                    throw new DataAccessException("Error: couldn't find it lol"); //TODO add a verbose error message
+                    throw new DataAccessException("Error: unauthorized");
                 }
             }
         }
@@ -106,4 +112,17 @@ public class DatabaseUserDAO implements UserDAO{
             )
             """
     };
+
+    private boolean userAlreadyExists(String username) throws DataAccessException {
+        try (var preparedStatement = getConnection().prepareStatement("SELECT * FROM user WHERE username = ?")) {
+            preparedStatement.setString(1, username);
+            preparedStatement.executeQuery();
+            try (var resultSet = preparedStatement.getResultSet()) {
+                return resultSet.next();
+            }
+        }
+        catch (SQLException e) {
+            throw new DataAccessException(e.getMessage());
+        }
+    }
 }

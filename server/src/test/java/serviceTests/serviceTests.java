@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class serviceTests {
 
     @BeforeEach
-    public void resetTest() {
+    public void resetTest() throws DataAccessException{
         ClearService clearService = new ClearService();
         clearService.clear();
     }

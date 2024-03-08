@@ -33,7 +33,7 @@ public class DatabaseGameDAO implements GameDAO{
     }
 
     public void clear() {
-        try (var preparedStatement = DatabaseManager.getConnection().prepareStatement("TRUNCATE TABLE auth")) {
+        try (var preparedStatement = DatabaseManager.getConnection().prepareStatement("DROP TABLE game")) {
             preparedStatement.executeUpdate();
         }
         catch (DataAccessException d) {

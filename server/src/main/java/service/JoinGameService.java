@@ -15,15 +15,15 @@ public class JoinGameService {
             throw new DataAccessException("Error: unauthorized"); //Could refactor to throw this in MemoryAuthDAO
         }
         //verify that the game Exists
-        MemoryGameDAO memoryGameDAO = new MemoryGameDAO();
-        GameData gameData = memoryGameDAO.getGame(r.gameID()); //Throws a DataAccesException if game doesn't exist
+        DatabaseGameDAO gameDAO = new DatabaseGameDAO();
+        GameData gameData = gameDAO.getGame(r.gameID()); //Throws a DataAccesException if game doesn't exist
 
         //if a color is specified, add that to color to gameID gameData object
         if (r.playerColor() == ChessGame.TeamColor.WHITE) {
-            memoryGameDAO.joinGame(r.gameID(), authData.username(), ChessGame.TeamColor.WHITE);
+            gameDAO.joinGame(r.gameID(), authData.username(), ChessGame.TeamColor.WHITE);
         }
         else if (r.playerColor() == ChessGame.TeamColor.BLACK) {
-            memoryGameDAO.joinGame(r.gameID(), authData.username(), ChessGame.TeamColor.BLACK);
+            gameDAO.joinGame(r.gameID(), authData.username(), ChessGame.TeamColor.BLACK);
         }
         else {
 
