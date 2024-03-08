@@ -32,17 +32,13 @@ public class DatabaseGameDAO implements GameDAO{
         DatabaseManager.configureDatabase(createStatements);
     }
 
-    public void clear() {
+    public void clear() throws DataAccessException {
         try (var preparedStatement = DatabaseManager.getConnection().prepareStatement("DROP TABLE game")) {
             preparedStatement.executeUpdate();
         }
-        catch (DataAccessException d) {
-            //do nothing
-        }
         catch (SQLException e) {
-            // do nothing lol
+            throw new DataAccessException(e.getMessage());
         }
-
     }
 
     @Override
@@ -52,6 +48,9 @@ public class DatabaseGameDAO implements GameDAO{
 
     @Override
     public int createGame(String gameName) throws DataAccessException {
+        if (gameName == null) {
+            throw new DataAccessException("Error: bad request");
+        }
         try (var preparedStatement = DatabaseManager.getConnection().prepareStatement("INSERT INTO game (gameName, chessGame) VALUES(?, ?)", Statement.RETURN_GENERATED_KEYS)) {
             preparedStatement.setString(1, gameName);
             preparedStatement.setString(2, new Gson().toJson(new ChessGame()));

@@ -15,20 +15,20 @@ public class DatabaseAuthDAO implements AuthDAO{
     }
 
     @Override
-    public void clear() {
+    public void clear() throws DataAccessException {
         try (var preparedStatement = getConnection().prepareStatement("DROP TABLE auth")) {
             preparedStatement.executeUpdate();
         }
-        catch (DataAccessException d) {
-            //nah lol
-        }
         catch (SQLException e) {
-            //lol
+            throw new DataAccessException(e.getMessage());
         }
     }
 
     @Override
     public String createAuth(String username) throws DataAccessException {
+        if (username == null) {
+            throw new DataAccessException("Error: bad request");
+        }
         try (var preparedStatement = getConnection().prepareStatement("INSERT INTO auth (username, auth) VALUES(?, ?)")) {
             String authToken = generateAuth();
             preparedStatement.setString(1, username);

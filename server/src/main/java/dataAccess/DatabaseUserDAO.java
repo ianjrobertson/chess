@@ -17,15 +17,12 @@ public class DatabaseUserDAO implements UserDAO{
         DatabaseManager.configureDatabase(createStatements);
     }
     @Override
-    public void clear() {
+    public void clear() throws DataAccessException{
         try (var preparedStatement = getConnection().prepareStatement("DROP TABLE user")) {
             preparedStatement.executeUpdate();
         }
-        catch (DataAccessException d) {
-            //haha do nothing lol
-        }
         catch (SQLException e) {
-            //do nothing lol
+            throw new DataAccessException(e.getMessage());
         }
     }
 
