@@ -47,7 +47,7 @@ public class DatabaseGameDAO implements GameDAO{
 
     @Override
     public void insertGame(GameData g) throws DataAccessException {
-
+        //do nothing for this implementation
     }
 
     @Override
