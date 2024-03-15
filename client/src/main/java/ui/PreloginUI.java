@@ -13,9 +13,9 @@ public class PreloginUI {
     private boolean running;
     private ServerFacade serverFacade;
 
-    public PreloginUI() {
+    public PreloginUI(String url) {
         running = true;
-        serverFacade = new ServerFacade();
+        serverFacade = new ServerFacade(url);
     }
 
     public void run() {
