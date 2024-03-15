@@ -1,5 +1,9 @@
 package ui;
 
+import server.ServerFacade;
+import service.ServiceRecords.LoginRequest;
+import service.ServiceRecords.RegisterRequest;
+
 import java.util.Scanner;
 
 public class PreloginUI {
@@ -7,9 +11,11 @@ public class PreloginUI {
     //Read, eval, Print, loop.
 
     private boolean running;
+    private ServerFacade serverFacade;
 
     public PreloginUI() {
         running = true;
+        serverFacade = new ServerFacade();
     }
 
     public void run() {
@@ -66,7 +72,7 @@ public class PreloginUI {
 
         System.out.println(username + " " + password);
 
-        //Have a server facade class. Call the login method on it with a login request object
+        serverFacade.login(new LoginRequest(username, password));
     }
 
     private void register(String input) {
@@ -76,6 +82,8 @@ public class PreloginUI {
         String email = words[3];
 
         System.out.println(username + " " + password + " " + email);
+
+        serverFacade.register(new RegisterRequest(username, password, email));
         // have a server facade class, call the register method on it with a register request.
 
     }
