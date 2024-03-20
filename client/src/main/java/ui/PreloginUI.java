@@ -2,14 +2,15 @@ package ui;
 
 import server.ServerFacade;
 import service.ServiceRecords.LoginRequest;
+import service.ServiceRecords.LoginResponse;
 import service.ServiceRecords.RegisterRequest;
+import service.ServiceRecords.RegisterResponse;
 
 import java.util.Scanner;
 
 public class PreloginUI {
 
     //Read, eval, Print, loop.
-
     private boolean running;
     private ServerFacade serverFacade;
 
@@ -72,7 +73,13 @@ public class PreloginUI {
 
         System.out.println(username + " " + password);
 
-        serverFacade.login(new LoginRequest(username, password));
+        try {
+            LoginResponse response = serverFacade.login(new LoginRequest(username, password));
+            this.postLogin(response.authToken());
+        }
+        catch (Exception e){
+            System.out.println("Login failed"); //probably need to figure out how to display status code
+        }
     }
 
     private void register(String input) {
@@ -83,8 +90,18 @@ public class PreloginUI {
 
         System.out.println(username + " " + password + " " + email);
 
-        serverFacade.register(new RegisterRequest(username, password, email));
+        try {
+            RegisterResponse response = serverFacade.register(new RegisterRequest(username, password, email));
+            this.postLogin(response.authToken());
+        }
+        catch (Exception e) {
+            System.out.println("Register failed");
+        }
         // have a server facade class, call the register method on it with a register request.
+    }
 
+    private void postLogin(String authToken) {
+        PostloginUI postloginUI = new PostloginUI(this.serverFacade, authToken);
+        postloginUI.run();
     }
 }

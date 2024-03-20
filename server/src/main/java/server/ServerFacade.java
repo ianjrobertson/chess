@@ -1,10 +1,7 @@
 package server;
 
 import com.google.gson.Gson;
-import service.ServiceRecords.LoginRequest;
-import service.ServiceRecords.LoginResponse;
-import service.ServiceRecords.RegisterRequest;
-import service.ServiceRecords.RegisterResponse;
+import service.ServiceRecords.*;
 
 import java.io.*;
 import java.net.HttpURLConnection;
@@ -19,14 +16,17 @@ public class ServerFacade {
         serverURL = url;
     }
     //because how does it work with sending http requests to the server. what does that even mean.
-    public LoginResponse login(LoginRequest r) {
+    public LoginResponse login(LoginRequest r) throws Exception {
         // so now we just need to understand the method, path, request, and then call the makeRequest method
-        //Im gonna go get some lunch
-        return null;
+        return this.makeRequest("POST", "/session", r, LoginResponse.class);
     }
 
-    public RegisterResponse register(RegisterRequest r) {
-        return null;
+    public RegisterResponse register(RegisterRequest r) throws Exception {
+        return this.makeRequest("POST", "/user", r, RegisterResponse.class);
+    }
+
+    public void logout(LogoutRequest r) throws Exception {
+        this.makeRequest("DELETE", "/session", r, null);
     }
 
     private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass) throws Exception {
@@ -42,7 +42,7 @@ public class ServerFacade {
             return readBody(http, responseClass);
         }
         catch (Exception e) {
-            throw new Exception("This was bad lol");
+            throw new Exception(e.getMessage());
         }
     }
 
@@ -72,7 +72,7 @@ public class ServerFacade {
     private void throwIfNotSuccessful(HttpURLConnection http) throws IOException, Exception {
         var status = http.getResponseCode();
         if (!isSuccessful(status)) {
-            throw new Exception("This was bad");
+            throw new Exception("HTTP request unsuccessful");
         }
     }
 
