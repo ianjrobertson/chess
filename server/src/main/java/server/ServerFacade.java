@@ -29,6 +29,12 @@ public class ServerFacade {
         this.makeRequest("DELETE", "/session", null, headers, null);
     }
 
+    public CreateGameResponse createGame(CreateGameRequest r, String authToken) throws Exception {
+        var headers = new HashMap<String, String>();
+        headers.put("authorization", authToken);
+        return this.makeRequest("POST", "/game", r, headers, CreateGameResponse.class);
+    }
+
     private <T> T makeRequest(String method, String path, Object request, HashMap<String, String> headers, Class<T> responseClass) throws Exception {
         try {
             URL url = (new URI(serverURL + path)).toURL();

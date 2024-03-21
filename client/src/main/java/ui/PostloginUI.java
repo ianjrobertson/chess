@@ -2,6 +2,8 @@ package ui;
 
 import server.Server;
 import server.ServerFacade;
+import service.ServiceRecords.CreateGameRequest;
+import service.ServiceRecords.CreateGameResponse;
 import service.ServiceRecords.LogoutRequest;
 
 import java.util.Scanner;
@@ -26,6 +28,7 @@ public class PostloginUI {
                 case("logout") -> this.logout();
                 case("help") -> this.help();
                 case("quit") -> this.quit();
+                case("create") -> this.createGame(input);
                 case null, default -> this.unknownInput();
             }
         }
@@ -68,8 +71,16 @@ public class PostloginUI {
         }
     }
 
-    private void createGame(String name) {
-
+    private void createGame(String input) {
+        String[] words = input.trim().split("\\s+");
+        String name = words[1];
+        try {
+            CreateGameResponse res = serverFacade.createGame(new CreateGameRequest(name), sessionAuthToken);
+            System.out.println("Game Created. Game ID: " + res.gameID());
+        }
+        catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     private void listGames() {
