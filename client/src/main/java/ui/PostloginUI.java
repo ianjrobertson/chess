@@ -55,12 +55,13 @@ public class PostloginUI {
 
     private void quit() {
         running = false;
-        System.out.println("Have a nice day! :)");
     }
 
     private void logout() {
         try {
             serverFacade.logout(new LogoutRequest(sessionAuthToken));
+            System.out.println("Logout Successful - type \"help\" to get started");
+            this.quit();
         }
         catch (Exception e) {
             System.out.println(e.getMessage());

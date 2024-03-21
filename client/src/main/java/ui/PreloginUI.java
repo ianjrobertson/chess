@@ -71,10 +71,9 @@ public class PreloginUI {
         String username = words[1];
         String password = words[2];
 
-        System.out.println(username + " " + password);
-
         try {
             LoginResponse response = serverFacade.login(new LoginRequest(username, password));
+            System.out.println(response);
             this.postLogin(response.authToken());
         }
         catch (Exception e){
@@ -88,10 +87,9 @@ public class PreloginUI {
         String password = words[2];
         String email = words[3];
 
-        System.out.println(username + " " + password + " " + email);
-
         try {
             RegisterResponse response = serverFacade.register(new RegisterRequest(username, password, email));
+            System.out.println(response);
             this.postLogin(response.authToken());
         }
         catch (Exception e) {
