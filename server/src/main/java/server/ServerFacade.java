@@ -35,6 +35,18 @@ public class ServerFacade {
         return this.makeRequest("POST", "/game", r, headers, CreateGameResponse.class);
     }
 
+    public ListGamesResponse listGames(ListGamesRequest r) throws Exception {
+        var headers = new HashMap<String, String>();
+        headers.put("authorization", r.authToken());
+        return this.makeRequest("GET", "/game", null, headers, ListGamesResponse.class);
+    }
+
+    public void joinGame(JoinGameRequest r, String authToken) throws Exception {
+        var headers = new HashMap<String, String>();
+        headers.put("authorization", authToken);
+        this.makeRequest("PUT", "/game", r, headers, null);
+    }
+
     private <T> T makeRequest(String method, String path, Object request, HashMap<String, String> headers, Class<T> responseClass) throws Exception {
         try {
             URL url = (new URI(serverURL + path)).toURL();

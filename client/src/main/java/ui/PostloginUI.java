@@ -1,10 +1,9 @@
 package ui;
 
+import chess.ChessGame;
 import server.Server;
 import server.ServerFacade;
-import service.ServiceRecords.CreateGameRequest;
-import service.ServiceRecords.CreateGameResponse;
-import service.ServiceRecords.LogoutRequest;
+import service.ServiceRecords.*;
 
 import java.util.Scanner;
 
@@ -29,6 +28,8 @@ public class PostloginUI {
                 case("help") -> this.help();
                 case("quit") -> this.quit();
                 case("create") -> this.createGame(input);
+                case("list") -> this.listGames();
+                case("join") -> this.joinGame(input);
                 case null, default -> this.unknownInput();
             }
         }
@@ -84,15 +85,45 @@ public class PostloginUI {
     }
 
     private void listGames() {
+        try {
+            ListGamesResponse res = serverFacade.listGames(new ListGamesRequest(sessionAuthToken));
+            System.out.println(res);
+            //To String method for listGames??
+        }
+        catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
 
     }
 
-    private void joinGame(int gameID) {
-
+    private void joinGame(String input) {
+        String[] words = input.trim().split("\\s+");
+        Integer gameID = Integer.parseInt(words[1]);
+        String color = words[2];
+        ChessGame.TeamColor teamColor;
+        if (color.equalsIgnoreCase("white")) {
+            teamColor = ChessGame.TeamColor.WHITE;
+        }
+        else if (color.equalsIgnoreCase("black")) {
+            teamColor = ChessGame.TeamColor.BLACK;
+        }
+        else {
+            this.unknownInput();
+            return;
+        }
+        JoinGameRequest req = new JoinGameRequest(teamColor, gameID);
+        try {
+            serverFacade.joinGame(req, sessionAuthToken);
+            System.out.println("Successfully Joined game: " + gameID);
+            //Call GameUI
+        }
+        catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     private void observeGame(int gameID) {
-
+        //Maybe we just make a gameUI that displays the game
     }
 
 }
