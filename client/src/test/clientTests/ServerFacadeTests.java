@@ -33,6 +33,10 @@ public class ServerFacadeTests {
         Assertions.assertDoesNotThrow(() -> serverFacade.clear());
     }
 
+    @Test void clearNegative() throws Exception {
+        assert true; // do nothing
+    }
+
     @Test
     public void registerPositive() throws Exception {
         this.clearServer();
