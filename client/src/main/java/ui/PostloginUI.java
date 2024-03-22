@@ -1,20 +1,22 @@
 package ui;
 
 import chess.ChessGame;
-import server.Server;
+import model.GameData;
 import server.ServerFacade;
 import service.ServiceRecords.*;
 
-import java.util.Scanner;
+import java.util.*;
 
 public class PostloginUI {
     private boolean running;
     private final ServerFacade serverFacade;
     private final String sessionAuthToken;
+    private HashMap<Integer, Integer> gameIDMap;
     public PostloginUI(ServerFacade facade, String authToken) {
         running = true;
         serverFacade = facade;
         sessionAuthToken = authToken;
+        gameIDMap = new HashMap<>();
     }
 
     public void run() {
@@ -23,6 +25,7 @@ public class PostloginUI {
         while (running) {
             String input = scanner.nextLine();
             String command = getFirstWord(input);
+            command = command.toLowerCase(Locale.ROOT);
             switch(command) {
                 case("logout") -> this.logout();
                 case("help") -> this.help();
@@ -30,6 +33,7 @@ public class PostloginUI {
                 case("create") -> this.createGame(input);
                 case("list") -> this.listGames();
                 case("join") -> this.joinGame(input);
+                case("observe") -> this.observeGame(input);
                 case null, default -> this.unknownInput();
             }
         }
@@ -52,9 +56,8 @@ public class PostloginUI {
         System.out.println("logout - logout the session");
         System.out.println("create <NAME> - create a new game");
         System.out.println("list - games");
-        System.out.println("join <ID> [WHITE|BLACK|<empty>] - join existing game");
+        System.out.println("join <ID> [WHITE|BLACK] - join existing game");
         System.out.println("observe <ID> - observe game");
-        System.out.println("quit - end session");
     }
 
     private void quit() {
@@ -64,7 +67,8 @@ public class PostloginUI {
     private void logout() {
         try {
             serverFacade.logout(new LogoutRequest(sessionAuthToken));
-            System.out.println("Logout Successful - type \"help\" to get started");
+            System.out.println("Logout Successful");
+            System.out.println("Type \"help\" to get started");
             this.quit();
         }
         catch (Exception e) {
@@ -77,7 +81,8 @@ public class PostloginUI {
         String name = words[1];
         try {
             CreateGameResponse res = serverFacade.createGame(new CreateGameRequest(name), sessionAuthToken);
-            System.out.println("Game Created. Game ID: " + res.gameID());
+            gameIDMap.put(gameIDMap.size() + 1, res.gameID());
+            System.out.println("Game Created. \"list\" games to join");
         }
         catch (Exception e) {
             System.out.println(e.getMessage());
@@ -87,8 +92,13 @@ public class PostloginUI {
     private void listGames() {
         try {
             ListGamesResponse res = serverFacade.listGames(new ListGamesRequest(sessionAuthToken));
-            System.out.println(res);
-            //To String method for listGames??
+            Collection<GameData> gamesList = res.games();
+            int gameIndex = 1;
+            for (GameData game: gamesList) {
+                gameIDMap.put(gameIndex, game.gameID());
+                System.out.print(gameIndex++ + ". ");
+                System.out.println(game.listGame());
+            }
         }
         catch (Exception e) {
             System.out.println(e.getMessage());
@@ -98,7 +108,7 @@ public class PostloginUI {
 
     private void joinGame(String input) {
         String[] words = input.trim().split("\\s+");
-        Integer gameID = Integer.parseInt(words[1]);
+        int gameID = gameIDMap.get(Integer.parseInt(words[1]));
         String color = words[2];
         ChessGame.TeamColor teamColor;
         if (color.equalsIgnoreCase("white")) {
@@ -123,8 +133,17 @@ public class PostloginUI {
         }
     }
 
-    private void observeGame(int gameID) {
-        //Maybe we just make a gameUI that displays the game
+    private void observeGame(String input) {
+        try {
+            String[] words = input.trim().split("\\s+");
+            int gameID = gameIDMap.get(Integer.parseInt(words[1]));
+            JoinGameRequest req = new JoinGameRequest(null, gameID);
+            serverFacade.joinGame(req, sessionAuthToken);
+            GameplayUI gameplayUI = new GameplayUI(gameID, sessionAuthToken, serverFacade);
+        }
+        catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
     }
 
 }

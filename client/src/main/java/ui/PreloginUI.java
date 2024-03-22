@@ -73,7 +73,7 @@ public class PreloginUI {
 
         try {
             LoginResponse response = serverFacade.login(new LoginRequest(username, password));
-            System.out.println(response);
+            //System.out.println(response);
             this.postLogin(response.authToken());
         }
         catch (Exception e){
@@ -101,5 +101,6 @@ public class PreloginUI {
     private void postLogin(String authToken) {
         PostloginUI postloginUI = new PostloginUI(this.serverFacade, authToken);
         postloginUI.run();
+        //Once we have exited the scope of postLogin, we can quit here too
     }
 }

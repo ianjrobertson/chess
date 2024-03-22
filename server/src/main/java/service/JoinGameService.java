@@ -26,8 +26,7 @@ public class JoinGameService {
             gameDAO.joinGame(r.gameID(), authData.username(), ChessGame.TeamColor.BLACK);
         }
         else {
-
+            // Else, I don't know what it means to add the player as a spectator???
         }
-        // Else, I don't know what it means to add the player as a spectator???
     }
 }

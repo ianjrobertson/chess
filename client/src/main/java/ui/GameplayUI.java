@@ -29,10 +29,9 @@ public class GameplayUI {
         System.out.println(EscapeSequences.ERASE_SCREEN);
         try {
             ChessBoard board = serverFacade.getGame(gameID, sessionAuthToken).getBoard();
-            this.printWhiteBoard(board);
-            System.out.println(EscapeSequences.RESET_BG_COLOR);
-            System.out.println();
             this.printBlackBoard(board);
+            System.out.println(EscapeSequences.RESET_BG_COLOR);
+            this.printWhiteBoard(board);
         }
         catch (Exception e) {
             System.out.println(e.getMessage());
@@ -72,6 +71,7 @@ public class GameplayUI {
             System.out.print(EscapeSequences.SET_BG_COLOR_LIGHT_GREY + EscapeSequences.SMALLEMPTY + headerString.charAt(i) + " ");
         }
         System.out.print("   ");
+        System.out.println(EscapeSequences.RESET_BG_COLOR);
     }
 
     private void printBlackBoard(ChessBoard board) {
@@ -107,6 +107,7 @@ public class GameplayUI {
             System.out.print(EscapeSequences.SET_BG_COLOR_LIGHT_GREY + EscapeSequences.SMALLEMPTY + headerString.charAt(i) + " ");
         }
         System.out.print("   ");
+        System.out.println(EscapeSequences.RESET_BG_COLOR);
     }
 
 
