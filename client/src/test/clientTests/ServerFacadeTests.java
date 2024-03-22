@@ -29,7 +29,7 @@ public class ServerFacadeTests {
 
     public void clearServer() throws Exception {serverFacade.clear();}
 
-    @Test void clearPositve() throws  Exception {
+    @Test void clearPositive() throws  Exception {
         Assertions.assertDoesNotThrow(() -> serverFacade.clear());
     }
 
