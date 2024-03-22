@@ -29,7 +29,6 @@ public class PostloginUI {
             switch(command) {
                 case("logout") -> this.logout();
                 case("help") -> this.help();
-                case("quit") -> this.quit();
                 case("create") -> this.createGame(input);
                 case("list") -> this.listGames();
                 case("join") -> this.joinGame(input);
@@ -107,22 +106,22 @@ public class PostloginUI {
     }
 
     private void joinGame(String input) {
-        String[] words = input.trim().split("\\s+");
-        int gameID = gameIDMap.get(Integer.parseInt(words[1]));
-        String color = words[2];
-        ChessGame.TeamColor teamColor;
-        if (color.equalsIgnoreCase("white")) {
-            teamColor = ChessGame.TeamColor.WHITE;
-        }
-        else if (color.equalsIgnoreCase("black")) {
-            teamColor = ChessGame.TeamColor.BLACK;
-        }
-        else {
-            this.unknownInput();
-            return;
-        }
-        JoinGameRequest req = new JoinGameRequest(teamColor, gameID);
         try {
+            String[] words = input.trim().split("\\s+");
+            int gameID = gameIDMap.get(Integer.parseInt(words[1]));
+            String color = words[2];
+            ChessGame.TeamColor teamColor;
+            if (color.equalsIgnoreCase("white")) {
+                teamColor = ChessGame.TeamColor.WHITE;
+            }
+            else if (color.equalsIgnoreCase("black")) {
+                teamColor = ChessGame.TeamColor.BLACK;
+            }
+            else {
+                this.unknownInput();
+                return;
+            }
+            JoinGameRequest req = new JoinGameRequest(teamColor, gameID);
             serverFacade.joinGame(req, sessionAuthToken);
             System.out.println("Successfully Joined game: " + gameID);
             //Call GameUI
