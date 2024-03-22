@@ -18,6 +18,10 @@ public class ServerFacade {
     public ServerFacade(String url) {
         serverURL = url;
     }
+
+    public void clear() throws Exception {
+        this.makeRequest("DELETE", "/db", null, null, null);
+    }
     public LoginResponse login(LoginRequest r) throws Exception {
         return this.makeRequest("POST", "/session", r,null, LoginResponse.class);
     }

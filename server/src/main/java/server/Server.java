@@ -93,7 +93,6 @@ public class Server {
                 res.status(500);
                 return new Gson().toJson(errorResponse);
             }
-            //Need to figure out what to do with Error" bad request
         }
     }
 
@@ -113,10 +112,6 @@ public class Server {
     }
 
     private Object logout(Request req, Response res) {
-        //take the request object, should be an authToken string.
-        //call the logout method on the logoutService class
-        //Handle the exceptions!
-
         try {
             String authToken = req.headers("authorization");
             LogoutRequest logoutRequest = new LogoutRequest(authToken);
