@@ -28,7 +28,11 @@ public class GameplayUI {
 
         System.out.println(EscapeSequences.ERASE_SCREEN);
         try {
-            this.printWhiteBoard(serverFacade.getGame(gameID, sessionAuthToken).getBoard());
+            ChessBoard board = serverFacade.getGame(gameID, sessionAuthToken).getBoard();
+            this.printWhiteBoard(board);
+            System.out.println(EscapeSequences.RESET_BG_COLOR);
+            System.out.println();
+            this.printBlackBoard(board);
         }
         catch (Exception e) {
             System.out.println(e.getMessage());
@@ -36,31 +40,73 @@ public class GameplayUI {
     }
 
     private void printWhiteBoard(ChessBoard board) {
-        //So it look like I can just print it out normally, then If I want to add cool colors I can go ahead and do that
-        //Print header
-        System.out.print(" "); // for the row number
+        System.out.print(EscapeSequences.SET_BG_COLOR_LIGHT_GREY + "   "); // for the row number
         for (int i = 0; i < headerString.length(); i++) {
-            System.out.print(EscapeSequences.EMPTY + headerString.charAt(i));
+            System.out.print(EscapeSequences.SET_BG_COLOR_LIGHT_GREY + EscapeSequences.SMALLEMPTY + headerString.charAt(i) + " ");
         }
-        System.out.println();
+        System.out.print("   ");
+        System.out.println(EscapeSequences.RESET_BG_COLOR);
         //Print gameBoard
         for (int row = 1; row <= 8; row ++) {
-            System.out.print(row);
+            System.out.print(EscapeSequences.SET_BG_COLOR_LIGHT_GREY + " " + row + " ");
             for (int col = 1; col <= 8; col++) {
                 ChessPiece piece = board.getPiece(new ChessPosition(row, col));
                 if (piece == null) {
-                    System.out.print(EscapeSequences.EMPTY);
+                    if ((row + col) % 2 == 0)
+                        System.out.print(EscapeSequences.SET_BG_COLOR_WHITE + EscapeSequences.EMPTY);
+                    else
+                        System.out.print(EscapeSequences.SET_BG_COLOR_DARK_GREY + EscapeSequences.EMPTY);
                 }
                 else {
-                    System.out.print(board.getPiece(new ChessPosition(row, col)));
+                    if ((row + col) % 2 == 0)
+                        System.out.print(EscapeSequences.SET_BG_COLOR_WHITE + board.getPiece(new ChessPosition(row, col)));
+                    else
+                        System.out.print(EscapeSequences.SET_BG_COLOR_DARK_GREY + board.getPiece(new ChessPosition(row, col)));
                 }
             }
-            System.out.println();
+            System.out.print(EscapeSequences.SET_BG_COLOR_LIGHT_GREY + " " + row + " ");
+            System.out.println(EscapeSequences.RESET_BG_COLOR);
         }
+        System.out.print(EscapeSequences.SET_BG_COLOR_LIGHT_GREY + "   "); // for the row number
+        for (int i = 0; i < headerString.length(); i++) {
+            System.out.print(EscapeSequences.SET_BG_COLOR_LIGHT_GREY + EscapeSequences.SMALLEMPTY + headerString.charAt(i) + " ");
+        }
+        System.out.print("   ");
     }
 
     private void printBlackBoard(ChessBoard board) {
-
+        System.out.print(EscapeSequences.SET_BG_COLOR_LIGHT_GREY + "   "); // for the row number
+        for (int i = 0; i < headerString.length(); i++) {
+            System.out.print(EscapeSequences.SET_BG_COLOR_LIGHT_GREY + EscapeSequences.SMALLEMPTY + headerString.charAt(i) + " ");
+        }
+        System.out.print("   ");
+        System.out.println(EscapeSequences.RESET_BG_COLOR);
+        //Print gameBoard
+        for (int row = 8; row >= 1; row--) {
+            System.out.print(EscapeSequences.SET_BG_COLOR_LIGHT_GREY + " " + row + " ");
+            for (int col = 8; col >= 1; col--) {
+                ChessPiece piece = board.getPiece(new ChessPosition(row, col));
+                if (piece == null) {
+                    if ((row + col) % 2 == 0)
+                        System.out.print(EscapeSequences.SET_BG_COLOR_WHITE + EscapeSequences.EMPTY);
+                    else
+                        System.out.print(EscapeSequences.SET_BG_COLOR_DARK_GREY + EscapeSequences.EMPTY);
+                }
+                else {
+                    if ((row + col) % 2 == 0)
+                        System.out.print(EscapeSequences.SET_BG_COLOR_WHITE + board.getPiece(new ChessPosition(row, col)));
+                    else
+                        System.out.print(EscapeSequences.SET_BG_COLOR_DARK_GREY + board.getPiece(new ChessPosition(row, col)));
+                }
+            }
+            System.out.print(EscapeSequences.SET_BG_COLOR_LIGHT_GREY + " " + row + " ");
+            System.out.println(EscapeSequences.RESET_BG_COLOR);
+        }
+        System.out.print(EscapeSequences.SET_BG_COLOR_LIGHT_GREY + "   "); // for the row number
+        for (int i = 0; i < headerString.length(); i++) {
+            System.out.print(EscapeSequences.SET_BG_COLOR_LIGHT_GREY + EscapeSequences.SMALLEMPTY + headerString.charAt(i) + " ");
+        }
+        System.out.print("   ");
     }
 
 
