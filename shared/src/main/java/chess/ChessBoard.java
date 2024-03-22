@@ -25,6 +25,8 @@ public class ChessBoard {
         this.otherTeamColor = ChessGame.TeamColor.BLACK;
         this.whiteKingPosition = null;
         this.blackKingPosition = null;
+
+        this.resetBoard();
     }
 
     /**
@@ -126,11 +128,6 @@ public class ChessBoard {
      * position
      */
     public ChessPiece getPiece(ChessPosition position) {
-        //What error handling is needed?
-        //Make sure the position is on the board?
-        //Does color or type matter?
-
-        //Need NULL exception
         return this.board[position.getRowIndex()][position.getColumnIndex()];
     }
 

@@ -1,6 +1,9 @@
 package server;
 
+import chess.ChessBoard;
+import chess.ChessGame;
 import com.google.gson.Gson;
+import model.GameData;
 import service.ServiceRecords.*;
 
 import java.io.*;
@@ -39,6 +42,16 @@ public class ServerFacade {
         var headers = new HashMap<String, String>();
         headers.put("authorization", r.authToken());
         return this.makeRequest("GET", "/game", null, headers, ListGamesResponse.class);
+    }
+
+    public ChessGame getGame(int gameID, String authToken) throws Exception {
+        ListGamesResponse response = this.listGames(new ListGamesRequest(authToken));
+        for (GameData game: response.games()) {
+            if (game.gameID() == gameID) {
+                return game.game();
+            }
+        }
+        throw new Exception("Invalid gameID");
     }
 
     public void joinGame(JoinGameRequest r, String authToken) throws Exception {

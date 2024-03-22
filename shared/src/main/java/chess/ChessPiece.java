@@ -12,6 +12,65 @@ import java.util.Objects;
  * signature of the existing methods.
  */
 public class ChessPiece {
+    public static final String WHITE_KING = " ♔ ";
+    public static final String WHITE_QUEEN = " ♕ ";
+    public static final String WHITE_BISHOP = " ♗ ";
+    public static final String WHITE_KNIGHT = " ♘ ";
+    public static final String WHITE_ROOK = " ♖ ";
+    public static final String WHITE_PAWN = " ♙ ";
+    public static final String BLACK_KING = " ♚ ";
+    public static final String BLACK_QUEEN = " ♛ ";
+    public static final String BLACK_BISHOP = " ♝ ";
+    public static final String BLACK_KNIGHT = " ♞ ";
+    public static final String BLACK_ROOK = " ♜ ";
+    public static final String BLACK_PAWN = " ♟ ";
+    public static final String EMPTY = " \u2003 ";
+    @Override
+    public String toString() {
+        //switch statement that will return the unicode character for each type
+        switch(this.type) {
+            case KING: {
+                if (this.pieceColor == ChessGame.TeamColor.WHITE)
+                    return WHITE_KING;
+                else
+                    return BLACK_KING;
+            }
+            case QUEEN: {
+                if (this.pieceColor == ChessGame.TeamColor.WHITE)
+                    return WHITE_QUEEN;
+                else
+                    return BLACK_QUEEN;
+            }
+            case KNIGHT: {
+                if (this.pieceColor == ChessGame.TeamColor.WHITE)
+                    return WHITE_KNIGHT;
+                else
+                    return BLACK_KNIGHT;
+            }
+            case BISHOP: {
+                if (this.pieceColor == ChessGame.TeamColor.WHITE)
+                    return WHITE_BISHOP;
+                else
+                    return BLACK_BISHOP;
+            }
+            case ROOK: {
+                if (this.pieceColor == ChessGame.TeamColor.WHITE)
+                    return WHITE_ROOK;
+                else
+                    return BLACK_ROOK;
+            }
+            case PAWN: {
+                if (this.pieceColor == ChessGame.TeamColor.WHITE)
+                    return WHITE_PAWN;
+                else
+                    return BLACK_PAWN;
+            }
+            case null, default: {
+                return EMPTY;
+            }
+        }
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

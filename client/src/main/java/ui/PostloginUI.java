@@ -116,6 +116,7 @@ public class PostloginUI {
             serverFacade.joinGame(req, sessionAuthToken);
             System.out.println("Successfully Joined game: " + gameID);
             //Call GameUI
+            GameplayUI gameplayUI = new GameplayUI(gameID, sessionAuthToken, serverFacade);
         }
         catch (Exception e) {
             System.out.println(e.getMessage());
