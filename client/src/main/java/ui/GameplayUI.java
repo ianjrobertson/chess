@@ -87,13 +87,13 @@ public class GameplayUI {
             for (int col = 8; col >= 1; col--) {
                 ChessPiece piece = board.getPiece(new ChessPosition(row, col));
                 if (piece == null) {
-                    if ((row + col) % 2 == 0)
+                    if ((row + col) % 2 == 1)
                         System.out.print(EscapeSequences.SET_BG_COLOR_WHITE + EscapeSequences.EMPTY);
                     else
                         System.out.print(EscapeSequences.SET_BG_COLOR_DARK_GREY + EscapeSequences.EMPTY);
                 }
                 else {
-                    if ((row + col) % 2 == 0)
+                    if ((row + col) % 2 == 1)
                         System.out.print(EscapeSequences.SET_BG_COLOR_WHITE + board.getPiece(new ChessPosition(row, col)));
                     else
                         System.out.print(EscapeSequences.SET_BG_COLOR_DARK_GREY + board.getPiece(new ChessPosition(row, col)));
