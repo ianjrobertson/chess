@@ -3,13 +3,13 @@ package ui;
 import chess.ChessBoard;
 import chess.ChessPiece;
 import chess.ChessPosition;
-import server.Server;
-import server.ServerFacade;
+import ServerFacade.ServerFacade;
 
 public class GameplayUI {
 
     private String sessionAuthToken;
     private final String headerString  = "ABCDEFGH";
+    private final String backwardsHeaderString = "HGFEDCBA";
     private ServerFacade serverFacade;
 
     //we need to draw the game from the perspective of both people.
@@ -76,8 +76,8 @@ public class GameplayUI {
 
     private void printBlackBoard(ChessBoard board) {
         System.out.print(EscapeSequences.SET_BG_COLOR_LIGHT_GREY + "   "); // for the row number
-        for (int i = 0; i < headerString.length(); i++) {
-            System.out.print(EscapeSequences.SET_BG_COLOR_LIGHT_GREY + EscapeSequences.SMALLEMPTY + headerString.charAt(i) + " ");
+        for (int i = 0; i < backwardsHeaderString.length(); i++) {
+            System.out.print(EscapeSequences.SET_BG_COLOR_LIGHT_GREY + EscapeSequences.SMALLEMPTY + backwardsHeaderString.charAt(i) + " ");
         }
         System.out.print("   ");
         System.out.println(EscapeSequences.RESET_BG_COLOR);
@@ -87,13 +87,13 @@ public class GameplayUI {
             for (int col = 8; col >= 1; col--) {
                 ChessPiece piece = board.getPiece(new ChessPosition(row, col));
                 if (piece == null) {
-                    if ((row + col) % 2 == 1)
+                    if ((row + col) % 2 == 0)
                         System.out.print(EscapeSequences.SET_BG_COLOR_WHITE + EscapeSequences.EMPTY);
                     else
                         System.out.print(EscapeSequences.SET_BG_COLOR_DARK_GREY + EscapeSequences.EMPTY);
                 }
                 else {
-                    if ((row + col) % 2 == 1)
+                    if ((row + col) % 2 == 0)
                         System.out.print(EscapeSequences.SET_BG_COLOR_WHITE + board.getPiece(new ChessPosition(row, col)));
                     else
                         System.out.print(EscapeSequences.SET_BG_COLOR_DARK_GREY + board.getPiece(new ChessPosition(row, col)));
@@ -103,8 +103,8 @@ public class GameplayUI {
             System.out.println(EscapeSequences.RESET_BG_COLOR);
         }
         System.out.print(EscapeSequences.SET_BG_COLOR_LIGHT_GREY + "   "); // for the row number
-        for (int i = 0; i < headerString.length(); i++) {
-            System.out.print(EscapeSequences.SET_BG_COLOR_LIGHT_GREY + EscapeSequences.SMALLEMPTY + headerString.charAt(i) + " ");
+        for (int i = 0; i < backwardsHeaderString.length(); i++) {
+            System.out.print(EscapeSequences.SET_BG_COLOR_LIGHT_GREY + EscapeSequences.SMALLEMPTY + backwardsHeaderString.charAt(i) + " ");
         }
         System.out.print("   ");
         System.out.println(EscapeSequences.RESET_BG_COLOR);

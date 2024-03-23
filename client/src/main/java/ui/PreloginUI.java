@@ -1,6 +1,6 @@
 package ui;
 
-import server.ServerFacade;
+import ServerFacade.ServerFacade;
 import service.ServiceRecords.LoginRequest;
 import service.ServiceRecords.LoginResponse;
 import service.ServiceRecords.RegisterRequest;

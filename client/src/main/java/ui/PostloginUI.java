@@ -2,7 +2,7 @@ package ui;
 
 import chess.ChessGame;
 import model.GameData;
-import server.ServerFacade;
+import ServerFacade.ServerFacade;
 import service.ServiceRecords.*;
 
 import java.util.*;

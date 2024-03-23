@@ -3,7 +3,7 @@ package clientTests;
 import chess.ChessGame;
 import org.junit.jupiter.api.*;
 import server.Server;
-import server.ServerFacade;
+import ServerFacade.ServerFacade;
 import service.ServiceRecords.*;
 
 
