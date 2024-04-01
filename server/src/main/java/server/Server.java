@@ -71,14 +71,12 @@ public class Server {
         try {
             RegisterRequest registerRequest = new Gson().fromJson(req.body(), RegisterRequest.class);
             RegisterResponse registerResponse = registerService.register(registerRequest);
-            //res.body();
             res.status(200);
             return new Gson().toJson(registerResponse);
         }
         catch(DataAccessException d) {
             if (d.getMessage().equals("Error: already taken")) {
                 ErrorResponse errorResponse = new ErrorResponse(d.getMessage());
-                //res.body(new Gson().toJson(errorResponse));
                 res.status(403);
                 return new Gson().toJson(errorResponse);
             }
@@ -89,7 +87,6 @@ public class Server {
             }
             else {
                 ErrorResponse errorResponse = new ErrorResponse(d.getMessage());
-                //res.body(new Gson().toJson(errorResponse));
                 res.status(500);
                 return new Gson().toJson(errorResponse);
             }
@@ -115,7 +112,6 @@ public class Server {
         try {
             String authToken = req.headers("authorization");
             LogoutRequest logoutRequest = new LogoutRequest(authToken);
-            //LogoutRequest logoutRequest = new Gson().fromJson(req.headers("authorization"), LogoutRequest.class);
             logoutService.logout(logoutRequest);
             res.status(200);
             return "{}";
@@ -128,7 +124,6 @@ public class Server {
             }
             else {
                 ErrorResponse errorResponse = new ErrorResponse(d.getMessage());
-                //res.body(new Gson().toJson(errorResponse));
                 res.status(500);
                 return new Gson().toJson(errorResponse);
             }
@@ -139,7 +134,6 @@ public class Server {
         try {
             ListGamesRequest listGamesRequest = new ListGamesRequest(req.headers("authorization"));
             ListGamesResponse listGamesResponse = listGamesService.listGames(listGamesRequest);
-            //res.body(new Gson().toJson(listGamesResponse));
             res.status(200);
             return new Gson().toJson(listGamesResponse);
         }
@@ -153,7 +147,6 @@ public class Server {
             String authToken = req.headers("authorization");
             CreateGameRequest createGameRequest = new Gson().fromJson(req.body(), CreateGameRequest.class);
             CreateGameResponse createGameResponse = createGameService.createGame(authToken, createGameRequest);
-            //res.body(new Gson().toJson(createGameResponse));
             res.status(200);
             return new Gson().toJson(createGameResponse);
 
