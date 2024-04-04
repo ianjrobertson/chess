@@ -5,26 +5,21 @@ import chess.ChessPiece;
 import chess.ChessPosition;
 import ServerFacade.ServerFacade;
 
-public class GameplayUI {
+import java.util.Locale;
+import java.util.Scanner;
 
+import static ui.PostloginUI.getFirstWord;
+
+public class GameplayUI {
     private String sessionAuthToken;
     private final String headerString  = "ABCDEFGH";
     private final String backwardsHeaderString = "HGFEDCBA";
     private ServerFacade serverFacade;
-
-    //we need to draw the game from the perspective of both people.
-    //The only information we get is the json file? We can construct a chess board.
-    //We could construct a to_String method within chessBoard?
-    // we need to print both perspectives.
-    // So we could define our two_String method with a color flag and then that would return the correct perspective.
-    //I am not sure if that would work actually, because I think that the unicode colors only work for console output. we can do simply text for now and then modify it more later
+    private boolean running;
 
     public GameplayUI(int gameID, String sessionAuthToken, ServerFacade serverFacade) {
         this.sessionAuthToken = sessionAuthToken;
         this.serverFacade = serverFacade;
-        // do an api call to retrieve the game JSON and the construct a chessgame and then a chessboard
-        // Call the private print function for both perspectives
-        //Later we can make a repl look with the websocket and wait for calls to keep printing the new boards we get.
 
         System.out.println(EscapeSequences.ERASE_SCREEN);
         try {
@@ -36,6 +31,60 @@ public class GameplayUI {
         catch (Exception e) {
             System.out.println(e.getMessage());
         }
+    }
+
+    public void run() {
+        Scanner scanner = new Scanner(System.in);
+        while (running) {
+            String input = scanner.nextLine();
+            String command = getFirstWord(input);
+            command = command.toLowerCase(Locale.ROOT);
+            switch(command) {
+                case("help") -> this.help();
+                case("redraw") -> this.redraw();
+                case("leave") -> this.leaveGame();
+                case("move") -> this.makeMove();
+                case("resign") -> this.resign();
+                case("highlight") -> this.highlight();
+                case null, default -> this.unknownInput();
+            }
+        }
+    }
+
+    private void unknownInput() {
+        System.out.println("Unknown input, please try again");
+    }
+
+    private void help() {
+        System.out.println("help - list options");
+        System.out.println("redraw - redraw chess board");
+        System.out.println("leave - leave the current game");
+        System.out.println("resign - resign game, results in a loss");
+        System.out.println("highlight - highlight legal moves");
+    }
+
+    private void redraw() {
+        //For this one we just call print board for whichever color the player is.
+
+    }
+
+    private void leaveGame() {
+        // This should copy the logic used in the other part to leave the game.
+        // Use the server facade to send a request to the server to leave the game.
+
+    }
+
+    private void makeMove() {
+        //Uhhh... we need to figure out how to use the websocket stuff in order to make these requests i think.
+
+    }
+
+    private void resign() {
+
+    }
+
+    private void highlight() {
+
     }
 
     private void printWhiteBoard(ChessBoard board) {
@@ -109,6 +158,4 @@ public class GameplayUI {
         System.out.print("   ");
         System.out.println(EscapeSequences.RESET_BG_COLOR);
     }
-
-
 }
