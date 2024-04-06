@@ -11,4 +11,12 @@ public class JoinPlayerMessage extends UserGameCommand{
         this.color = color;
         this.commandType = commandType;
     }
+
+    public Integer getGameID() {
+        return this.gameID;
+    }
+
+    public ChessGame.TeamColor getColor() {
+        return this.color;
+    }
 }
