@@ -1,5 +1,6 @@
 package ui;
 
+import WebSocketFacade.WebSocketFacade;
 import chess.ChessBoard;
 import chess.ChessPiece;
 import chess.ChessPosition;
@@ -15,11 +16,14 @@ public class GameplayUI {
     private final String headerString  = "ABCDEFGH";
     private final String backwardsHeaderString = "HGFEDCBA";
     private ServerFacade serverFacade;
+    private WebSocketFacade webSocketFacade;
     private boolean running;
 
     public GameplayUI(int gameID, String sessionAuthToken, ServerFacade serverFacade) {
         this.sessionAuthToken = sessionAuthToken;
         this.serverFacade = serverFacade;
+        this.webSocketFacade = new WebSocketFacade();
+        //I think at this point we can connect to the websocket?
 
         System.out.println(EscapeSequences.ERASE_SCREEN);
         try {

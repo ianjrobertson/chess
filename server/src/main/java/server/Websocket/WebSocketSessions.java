@@ -1,6 +1,7 @@
 package server.Websocket;
 
-import javax.websocket.Session;
+//import javax.websocket.Session;
+import org.eclipse.jetty.websocket.api.*;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -36,8 +37,16 @@ public class WebSocketSessions {
     }
 
     public void removeSession(Session session) {
-        //Do we need to iterate through each game and then each group in the game to find the matching session and delete it
-
+        //so each game has a map of the Users in the game and the session.
+        //So we need to find the game that has the related session. And then remove The game <user, session> pairing from the session map
+        Iterator<Map.Entry<Integer, Map<String, Session>>> iterator = this.sessionMap.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Map.Entry<Integer, Map<String, Session>> entry = iterator.next();
+            Map<String, Session> innerMap = entry.getValue();
+            if (innerMap.containsValue(session)) {
+                iterator.remove(); // Remove the entry from the outer map
+            }
+        }
     }
 
     public Map<String, Session> getSessionsForGame(Integer gameID) {

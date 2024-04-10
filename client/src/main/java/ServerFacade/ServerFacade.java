@@ -62,6 +62,9 @@ public class ServerFacade {
         var headers = new HashMap<String, String>();
         headers.put("authorization", authToken);
         this.makeRequest("PUT", "/game", r, headers, null);
+        //open a websocket connection
+        //if req body is null. send an observe request
+        //else send a join request.
     }
 
     private <T> T makeRequest(String method, String path, Object request, HashMap<String, String> headers, Class<T> responseClass) throws Exception {
