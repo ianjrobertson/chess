@@ -7,10 +7,7 @@ import com.google.gson.Gson;
 import dataAccess.DataAccessException;
 import model.GameData;
 import org.eclipse.jetty.websocket.api.annotations.*;
-import service.JoinService;
-import service.LeaveGameService;
-import service.ListGamesService;
-import service.MakeMoveService;
+import service.*;
 import service.ServiceRecords.ListGamesRequest;
 import service.ServiceRecords.ListGamesResponse;
 import webSocketMessages.serverMessages.LoadGameMessage;
@@ -28,6 +25,7 @@ public class WebSocketHandler {
     private final JoinService joinService = new JoinService();
     private final MakeMoveService makeMoveService = new MakeMoveService();
     private final LeaveGameService leaveGameService = new LeaveGameService();
+    private final ResignService resignService = new ResignService();
 
     @OnWebSocketConnect
     public void onConnect(Session session) {
@@ -196,6 +194,8 @@ public class WebSocketHandler {
             var message = String.format("%s has left the game", username);
             NotificationMessage notificationMessage = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, message);
             this.broadcastMessage(leaveMessage.getGameID(), notificationMessage, leaveMessage.getAuthString());
+
+            // I think we also need to disconnect the user from the session for this one as well.
         }
         catch (Exception e) {
             onError(e);
@@ -203,7 +203,17 @@ public class WebSocketHandler {
     }
 
     public void resignGame(UserGameCommand command, Session session) {
-        ResignMessage resignMessage = (ResignMessage) command;
+        try {
+            ResignMessage resignMessage = (ResignMessage) command;
+            String username = resignService.resign(resignMessage.getGameID(), resignMessage.getAuthString());
+            var message = String.format("%s has resigned", username);
+            NotificationMessage notificationMessage = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, message);
+            this.broadcastMessage(resignMessage.getGameID(), notificationMessage, resignMessage.getAuthString());
+        }
+        catch (Exception e) {
+            onError(e);
+        }
+
 
         //Server marks the game as over (no more moves can be made). Game is updated in the database.
         // How do mark the game as over?

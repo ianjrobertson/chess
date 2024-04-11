@@ -7,7 +7,7 @@ public class ResignMessage extends UserGameCommand {
         this.gameID = gameID;
     }
 
-    private Integer getGameID() {
+    public Integer getGameID() {
         return this.gameID;
     }
 }

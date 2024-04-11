@@ -14,9 +14,11 @@ import java.util.Iterator;
 public class ChessGame {
     private ChessBoard board;
     private ChessGame.TeamColor teamTurn;
+    private boolean gameOver;
     public ChessGame() {
         this.board = new ChessBoard();
         this.teamTurn = TeamColor.WHITE;
+        this.gameOver = false;
     }
 
     /**
@@ -33,6 +35,10 @@ public class ChessGame {
     public TeamColor getTeamTurn() {
         return this.teamTurn;
     }
+
+    public boolean isGameOver() { return this.gameOver; }
+
+    public void setGameOver() { this.gameOver = true; }
 
     /**
      * Set's which teams turn it is
