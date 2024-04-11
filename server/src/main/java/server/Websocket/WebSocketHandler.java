@@ -8,6 +8,7 @@ import dataAccess.DataAccessException;
 import model.GameData;
 import org.eclipse.jetty.websocket.api.annotations.*;
 import service.JoinService;
+import service.LeaveGameService;
 import service.ListGamesService;
 import service.MakeMoveService;
 import service.ServiceRecords.ListGamesRequest;
@@ -22,10 +23,11 @@ import java.util.ArrayList;
 
 @WebSocket
 public class WebSocketHandler {
-    private WebSocketSessions sessions = new WebSocketSessions();
-    private ListGamesService listGamesService = new ListGamesService();
-    private JoinService joinService = new JoinService();
-    private MakeMoveService makeMoveService = new MakeMoveService();
+    private final WebSocketSessions sessions = new WebSocketSessions();
+    private final ListGamesService listGamesService = new ListGamesService();
+    private final JoinService joinService = new JoinService();
+    private final MakeMoveService makeMoveService = new MakeMoveService();
+    private final LeaveGameService leaveGameService = new LeaveGameService();
 
     @OnWebSocketConnect
     public void onConnect(Session session) {
@@ -182,18 +184,29 @@ public class WebSocketHandler {
     }
 
     public void leaveGame(UserGameCommand command, Session session) {
-        LeaveMessage leaveMessage = (LeaveMessage) command;
+        try {
+            LeaveMessage leaveMessage = (LeaveMessage) command;
+            String username = leaveGameService.leaveGame(leaveMessage.getGameID(), leaveMessage.getAuthString());
+            //If a player is leaving, then the game is updated to remove the root client. Game is updated in the database.
 
-        //If a player is leaving, then the game is updated to remove the root client. Game is updated in the database.
-        //TODO make updateGame Service
-        //Server sends a Notification message to all other clients in that game informing them that the root client left. This applies to both players and observers.
+            // Make an updateGame Service. We can use the insertGame method on the DAO
 
+            //TODO make updateGame Service
+            //Server sends a Notification message to all other clients in that game informing them that the root client left. This applies to both players and observers.
+            var message = String.format("%s has left the game", username);
+            NotificationMessage notificationMessage = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, message);
+            this.broadcastMessage(leaveMessage.getGameID(), notificationMessage, leaveMessage.getAuthString());
+        }
+        catch (Exception e) {
+            onError(e);
+        }
     }
 
     public void resignGame(UserGameCommand command, Session session) {
         ResignMessage resignMessage = (ResignMessage) command;
 
         //Server marks the game as over (no more moves can be made). Game is updated in the database.
+        // How do mark the game as over?
         //Server sends a Notification message to all clients in that game informing them that the root client resigned. This applies to both players and observers.
     }
 }
