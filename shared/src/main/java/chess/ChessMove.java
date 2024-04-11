@@ -56,4 +56,8 @@ public class ChessMove {
         return this.promotionPiece;
     }
 
+    public String toString() {
+        return String.format("%s,%s -> %s,%s", this.getStartPosition().getRow(),
+                this.getStartPosition().getColumn(), this.getEndPosition().getRow(), this.getEndPosition().getColumn());
+    }
 }

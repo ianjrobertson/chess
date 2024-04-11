@@ -44,6 +44,17 @@ public class DatabaseGameDAO implements GameDAO{
     @Override
     public void insertGame(GameData g) throws DataAccessException {
         //do nothing for this implementation
+        if (g == null || g.gameName() == null) {
+            throw new DataAccessException("Error: bad request");
+        }
+        try (var preparedStatement = DatabaseManager.getConnection().prepareStatement("UPDATE game SET chessGame = ? WHERE gameID = ?")) {
+            preparedStatement.setInt(1, g.gameID());
+            preparedStatement.setString(2, new Gson().toJson(g.game()));
+            preparedStatement.executeUpdate();
+        }
+        catch (SQLException e) {
+            throw new DataAccessException(e.getMessage());
+        }
     }
 
     @Override

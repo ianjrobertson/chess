@@ -105,7 +105,7 @@ public class ChessGame {
      *     }
      */
 
-    private boolean isValid(ChessMove move) {
+    public boolean isValid(ChessMove move) {
         Collection<ChessMove> moves = validMoves(move.getStartPosition());
         return moves.contains(move) && !leavesKingInDanger(move, this.getTeamTurn());
     }
