@@ -51,13 +51,15 @@ public class WebSocketHandler {
 
     @OnWebSocketMessage
     public void onMessage(Session session, String message) throws Exception {
+        System.out.println("Received message");
+        System.out.println(message);
         UserGameCommand command = new Gson().fromJson(message, UserGameCommand.class);
         switch (command.getCommandType()) {
-            case UserGameCommand.CommandType.JOIN_PLAYER -> this.joinPlayer(command, session);
-            case UserGameCommand.CommandType.JOIN_OBSERVER -> this.joinObserver(command, session);
-            case UserGameCommand.CommandType.MAKE_MOVE -> this.makeMove(command, session);
-            case UserGameCommand.CommandType.LEAVE -> this.leaveGame(command, session);
-            case UserGameCommand.CommandType.RESIGN -> this.resignGame(command, session);
+            case UserGameCommand.CommandType.JOIN_PLAYER -> this.joinPlayer(new Gson().fromJson(message, JoinPlayerMessage.class), session);
+            case UserGameCommand.CommandType.JOIN_OBSERVER -> this.joinObserver(new Gson().fromJson(message, JoinObserverMessage.class), session);
+            case UserGameCommand.CommandType.MAKE_MOVE -> this.makeMove(new Gson().fromJson(message, MakeMoveMessage.class));
+            case UserGameCommand.CommandType.LEAVE -> this.leaveGame(new Gson().fromJson(message, LeaveMessage.class), session);
+            case UserGameCommand.CommandType.RESIGN -> this.resignGame(new Gson().fromJson(message, ResignMessage.class), session);
         }
     }
 
@@ -67,11 +69,14 @@ public class WebSocketHandler {
         // Send these and they are handled by the WebSocketFacade
         // serialize the server message object
         //Should we serialize it before?
+        System.out.println("Sending Message from server");
         var gameSession = sessions.getSessionsForGame(gameID);
+        System.out.println(gameSession.size());
         var removeList = new ArrayList<Session>();
         for (var s: gameSession.keySet()) {
             if (gameSession.get(s).isOpen()) {
                 if (s.equals(authToken)) {
+                    System.out.println("Sending message to " + authToken);
                     gameSession.get(s).getRemote().sendString(new Gson().toJson(message));
                 }
             }
@@ -99,6 +104,7 @@ public class WebSocketHandler {
             //onError(new Throwable("Invalid Game ID"));
         }
         catch (DataAccessException d) {
+            System.out.println(d.getMessage());
             //onError(d);
         }
         return null;
@@ -117,15 +123,13 @@ public class WebSocketHandler {
                 removeList.add(gameSession.get(s));
             }
         }
-
         for (var s: removeList) {
             sessions.removeSession(s);
         }
     }
 
-    public void joinPlayer(UserGameCommand command, Session session) {
+    public void joinPlayer(JoinPlayerMessage joinPlayerMessage, Session session) {
         try {
-            JoinPlayerMessage joinPlayerMessage = (JoinPlayerMessage) command;
             sessions.addSession(joinPlayerMessage.getGameID(), joinPlayerMessage.getAuthString(), session);
             //1. Server sends a loadGame message back to the root client
             GameData game = this.getGame(joinPlayerMessage.getGameID(), joinPlayerMessage.getAuthString());
@@ -140,13 +144,13 @@ public class WebSocketHandler {
             this.broadcastMessage(joinPlayerMessage.getGameID(), notification, joinPlayerMessage.getAuthString());
         }
         catch (Exception e) {
+            System.out.println(e.getMessage());
             //onError(e);
         }
     }
 
-    public void joinObserver(UserGameCommand command, Session session) {
+    public void joinObserver(JoinObserverMessage joinObserverMessage, Session session) {
         try {
-            JoinObserverMessage joinObserverMessage = (JoinObserverMessage) command;
             sessions.addSession(joinObserverMessage.getGameID(), joinObserverMessage.getAuthString(), session);
             // Server sends a LOAD_GAME message back to the root client.
             GameData game = this.getGame(joinObserverMessage.getGameID(), joinObserverMessage.getAuthString());
@@ -155,20 +159,20 @@ public class WebSocketHandler {
             this.sendMessage(joinObserverMessage.getGameID(), loadGameMessage, joinObserverMessage.getAuthString());
 
             // Server sends a Notification message to all other clients in that game informing them the root client joined as an observer.
-            String username = joinService.join(command.getAuthString()); // the problem we have is the join Observer won't have a team color...
+            String username = joinService.join(joinObserverMessage.getAuthString()); // the problem we have is the join Observer won't have a team color...
             var message = String.format("%s joined the game as an observer", username);
             var notification = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, message);
             this.broadcastMessage(joinObserverMessage.getGameID(), notification, joinObserverMessage.getAuthString());
 
         }
         catch(Exception e) {
+            System.out.println(e.getMessage());
             //onError(e);
         }
     }
 
-    public void makeMove(UserGameCommand command, Session session) {
+    public void makeMove(MakeMoveMessage makeMoveMessage) {
         try {
-            MakeMoveMessage makeMoveMessage = (MakeMoveMessage) command;
             //Server verifies the validity of the move
             //Game is updated to represent the move. Game is updated in the database.
             //Todo make makeMove service that updates the current gameBoard
@@ -186,13 +190,13 @@ public class WebSocketHandler {
             this.broadcastMessage(makeMoveMessage.getGameID(), notification, makeMoveMessage.getAuthString());
         }
         catch  (Exception e) {
+            System.out.println(e.getMessage());
             //onError(e); //need more specific error handling for invalid move exception
         }
     }
 
-    public void leaveGame(UserGameCommand command, Session session) {
+    public void leaveGame(LeaveMessage leaveMessage, Session session) {
         try {
-            LeaveMessage leaveMessage = (LeaveMessage) command;
             String username = leaveGameService.leaveGame(leaveMessage.getGameID(), leaveMessage.getAuthString());
             //If a player is leaving, then the game is updated to remove the root client. Game is updated in the database.
 
@@ -207,19 +211,20 @@ public class WebSocketHandler {
             // I think we also need to disconnect the user from the session for this one as well.
         }
         catch (Exception e) {
+            System.out.println(e.getMessage());
             //onError(e);
         }
     }
 
-    public void resignGame(UserGameCommand command, Session session) {
+    public void resignGame(ResignMessage resignMessage, Session session) {
         try {
-            ResignMessage resignMessage = (ResignMessage) command;
             String username = resignService.resign(resignMessage.getGameID(), resignMessage.getAuthString());
             var message = String.format("%s has resigned", username);
             NotificationMessage notificationMessage = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, message);
             this.broadcastMessage(resignMessage.getGameID(), notificationMessage, resignMessage.getAuthString());
         }
         catch (Exception e) {
+            System.out.println(e.getMessage());
             //onError(e);
         }
 

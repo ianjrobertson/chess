@@ -7,7 +7,6 @@ import webSocketMessages.serverMessages.LoadGameMessage;
 import webSocketMessages.userCommands.*;
 
 import java.util.*;
-import java.util.concurrent.ExecutionException;
 
 import static ui.PostloginUI.getFirstWord;
 
@@ -25,7 +24,7 @@ public class GameplayUI implements GameHandler {
         this.gameID = gameID;
         this.sessionAuthToken = sessionAuthToken;
         this.serverFacade = serverFacade;
-        this.webSocketFacade = new WebSocketFacade();
+        this.webSocketFacade = new WebSocketFacade(this);
         this.color = color;
 
         System.out.println(EscapeSequences.ERASE_SCREEN);
@@ -37,8 +36,8 @@ public class GameplayUI implements GameHandler {
             else {
                 webSocketFacade.joinObserver(new JoinObserverMessage(sessionAuthToken, UserGameCommand.CommandType.JOIN_OBSERVER, gameID));
             }
-            this.redraw();
-            //System.out.println(EscapeSequences.RESET_BG_COLOR);
+            //this.redraw();
+            //System.out.print(EscapeSequences.RESET_BG_COLOR + EscapeSequences.SET_BG_COLOR_BLUE);
         }
         catch (Exception e) {
             System.out.println(e.getMessage());
@@ -65,10 +64,11 @@ public class GameplayUI implements GameHandler {
     }
 
     public void updateGame(LoadGameMessage message) {
+        System.out.println("Load game request recieved by game handler");
         if (color == ChessGame.TeamColor.WHITE || color == null)
-            this.printWhiteBoard(message.getGame().getBoard(), null);
+            this.printWhite(message.getGame().getBoard(), null);
         else
-            this.printBlackBoard(message.getGame().getBoard(), null);
+            this.printBlack(message.getGame().getBoard(), null);
     }
 
     public void printMessage(String message) {
@@ -83,18 +83,18 @@ public class GameplayUI implements GameHandler {
         System.out.println("help - list options");
         System.out.println("redraw - redraw chess board");
         System.out.println("leave - leave the current game");
-        System.out.println("move <ROW, COLUMN> -> <ROW, COLUMN> <PromotionPiece>");
+        System.out.println("move <ROW COLUMN> to <ROW COLUMN> <PromotionPiece>");
         System.out.println("resign - resign game, results in a loss");
-        System.out.println("highlight <ROW, COLUMN> - highlight legal moves");
+        System.out.println("highlight <ROW COLUMN> - highlight legal moves");
     }
 
     private void redraw() {
         try {
             ChessBoard board = serverFacade.getGame(gameID, sessionAuthToken).getBoard();
             if (color == ChessGame.TeamColor.WHITE || color == null)
-                this.printWhiteBoard(board, null);
+                this.printWhite(board, null);
             else
-                this.printBlackBoard(board, null);
+                this.printBlack(board, null);
         }
         catch (Exception e) {
             System.out.println(e.getMessage());
@@ -105,7 +105,7 @@ public class GameplayUI implements GameHandler {
     private void leaveGame() {
         try {
             running = false;
-            LeaveMessage leaveMessage = new LeaveMessage(sessionAuthToken, this.gameID);
+            LeaveMessage leaveMessage = new LeaveMessage(sessionAuthToken, this.gameID, UserGameCommand.CommandType.LEAVE);
             webSocketFacade.leaveGame(leaveMessage);
         }
         catch(Exception e) {
@@ -125,7 +125,7 @@ public class GameplayUI implements GameHandler {
     }
 
     private ChessMove parseMove(String input) {
-        //format: move 1,2 -> 3,5
+        //format: move 1 2 -> 3 5
         String[] words = input.trim().split("\\s+");
         int startRow = Integer.parseInt(words[1]);
         int startCol = Integer.parseInt(words[2]);
@@ -156,7 +156,7 @@ public class GameplayUI implements GameHandler {
 
     private void resign() {
         try {
-            webSocketFacade.resignGame(new ResignMessage(sessionAuthToken, gameID));
+            webSocketFacade.resignGame(new ResignMessage(UserGameCommand.CommandType.RESIGN, sessionAuthToken, gameID));
         }
         catch (Exception e) {
             System.out.println(e.getMessage());
@@ -167,50 +167,41 @@ public class GameplayUI implements GameHandler {
         try {
             String[] words = input.trim().split("\\s+");
             int startRow = Integer.parseInt(words[1]);
-            int startCol = Integer.parseInt(words[3]);
-            //So we need to take the pieceMoves list for the piece at that position.
-            // We need to validate that there is a piece at that position and that piece is the players
+            int startCol = Integer.parseInt(words[2]);
             ChessPosition piecePosition = new ChessPosition(startRow, startCol);
             ChessGame game = serverFacade.getGame(gameID, sessionAuthToken);
             Collection<ChessMove> pieceMoves = game.validMoves(piecePosition);
-
-            if (color == ChessGame.TeamColor.WHITE) {
-                this.printWhiteBoard(game.getBoard(), pieceMoves);
+            Collection<ChessPosition> endPosition = new ArrayList<>();
+            for (ChessMove move : pieceMoves) {
+                endPosition.add(move.getEndPosition());
             }
 
-            //okay so now we have a collection of all the legal moves that could be made. So now we need to Redraw the board
-            //maybe we can modify our printBoard method to take the pieceMoves as a parameter
-            // We can just pass it as null otherwise
-
-            // It might take more work, it would be easier to just pass the pieceMoves Collection.
-
-            // This Big O is gonna be crazy.
-
-            // If we have a set of positions, then iterate through each time and every time we remove the position when it is used
-            //
-
-            //So the idea is we highlight the legal moves for a given piece
-            // If the user gives the location of a piece and there is not a piece there, we throw an error
+            if (color == ChessGame.TeamColor.WHITE) {
+                this.printWhite(game.getBoard(), endPosition);
+            }
+            else if (color == ChessGame.TeamColor.BLACK) {
+                this.printBlack(game.getBoard(), endPosition);
+            }
         }
         catch (Exception e) {
             System.out.println(e.getMessage());
         }
     }
 
-    private void printWhiteBoard(ChessBoard board, Collection<ChessMove> highlightMoves) {
+    private void printBlack(ChessBoard board, Collection<ChessPosition> highlightMoves) {
         System.out.print(EscapeSequences.SET_BG_COLOR_LIGHT_GREY + "   "); // for the row number
-        for (int i = 0; i < headerString.length(); i++) {
-            System.out.print(EscapeSequences.SET_BG_COLOR_LIGHT_GREY + EscapeSequences.SMALLEMPTY + headerString.charAt(i) + " ");
+        for (int i = 1; i <= 8; i++) {
+            System.out.print(EscapeSequences.SET_BG_COLOR_LIGHT_GREY + EscapeSequences.SMALLEMPTY + i + " ");
         }
         System.out.print("   ");
         System.out.println(EscapeSequences.RESET_BG_COLOR);
         for (int row = 1; row <= 8; row ++) {
             System.out.print(EscapeSequences.SET_BG_COLOR_LIGHT_GREY + " " + row + " ");
-            for (int col = 1; col <= 8; col++) {
+            for (int col = 8; col > 0; col--) {
                 ChessPosition position = new ChessPosition(row, col);
                 ChessPiece piece = board.getPiece(position);
                 if (piece == null) {
-                    if ((row + col) % 2 == 0) {
+                    if ((row + col) % 2 != 0) {
                         if (highlightMoves != null && highlightMoves.contains(position)) {
                             System.out.print(EscapeSequences.SET_BG_COLOR_GREEN + EscapeSequences.EMPTY);
                         }
@@ -226,7 +217,7 @@ public class GameplayUI implements GameHandler {
                     }
                 }
                 else {
-                    if ((row + col) % 2 == 0) {
+                    if ((row + col) % 2 != 0) {
                         if (highlightMoves != null && highlightMoves.contains(position)) {
                             System.out.print(EscapeSequences.SET_BG_COLOR_GREEN + board.getPiece(new ChessPosition(row, col)));
                         }
@@ -247,36 +238,36 @@ public class GameplayUI implements GameHandler {
             System.out.println(EscapeSequences.RESET_BG_COLOR);
         }
         System.out.print(EscapeSequences.SET_BG_COLOR_LIGHT_GREY + "   "); // for the row number
-        for (int i = 0; i < headerString.length(); i++) {
-            System.out.print(EscapeSequences.SET_BG_COLOR_LIGHT_GREY + EscapeSequences.SMALLEMPTY + headerString.charAt(i) + " ");
+        for (int i = 1; i <= 8; i++) {
+            System.out.print(EscapeSequences.SET_BG_COLOR_LIGHT_GREY + EscapeSequences.SMALLEMPTY + i + " ");
         }
         System.out.print("   ");
         System.out.println(EscapeSequences.RESET_BG_COLOR);
     }
 
-    private void printBlackBoard(ChessBoard board, Collection<ChessMove> highlightMoves) {
+    private void printWhite(ChessBoard board, Collection<ChessPosition> highlightMoves) {
         System.out.print(EscapeSequences.SET_BG_COLOR_LIGHT_GREY + "   "); // for the row number
-        for (int i = 0; i < backwardsHeaderString.length(); i++) {
-            System.out.print(EscapeSequences.SET_BG_COLOR_LIGHT_GREY + EscapeSequences.SMALLEMPTY + backwardsHeaderString.charAt(i) + " ");
+        for (int i = 1; i <= 8 ; i++) {
+            System.out.print(EscapeSequences.SET_BG_COLOR_LIGHT_GREY + EscapeSequences.SMALLEMPTY + i + " ");
         }
         System.out.print("   ");
         System.out.println(EscapeSequences.RESET_BG_COLOR);
         //Print gameBoard
         for (int row = 8; row >= 1; row--) {
             System.out.print(EscapeSequences.SET_BG_COLOR_LIGHT_GREY + " " + row + " ");
-            for (int col = 8; col >= 1; col--) {
+            for (int col = 1; col <= 8; col++) {
                 ChessPosition position = new ChessPosition(row, col);
                 ChessPiece piece = board.getPiece(position);
                 if (piece == null) {
-                    if ((row + col) % 2 == 0) {
-                        if (highlightMoves != null & highlightMoves.contains(position)) {
+                    if ((row + col) % 2 != 0) {
+                        if (highlightMoves != null && highlightMoves.contains(position)) {
                             System.out.print(EscapeSequences.SET_BG_COLOR_GREEN + EscapeSequences.EMPTY);
                         }
                         else
                             System.out.print(EscapeSequences.SET_BG_COLOR_WHITE + EscapeSequences.EMPTY);
                     }
                     else {
-                        if (highlightMoves != null & highlightMoves.contains(position)) {
+                        if (highlightMoves != null && highlightMoves.contains(position)) {
                             System.out.print(EscapeSequences.SET_BG_COLOR_DARK_GREEN + EscapeSequences.EMPTY);
                         }
                         else
@@ -284,15 +275,15 @@ public class GameplayUI implements GameHandler {
                     }
                 }
                 else {
-                    if ((row + col) % 2 == 0) {
-                        if (highlightMoves != null & highlightMoves.contains(position)) {
+                    if ((row + col) % 2 != 0) {
+                        if (highlightMoves != null && highlightMoves.contains(position)) {
                             System.out.print(EscapeSequences.SET_BG_COLOR_GREEN + board.getPiece(new ChessPosition(row, col)));
                         }
                         else
                             System.out.print(EscapeSequences.SET_BG_COLOR_WHITE + board.getPiece(new ChessPosition(row, col)));
                     }
                     else {
-                        if (highlightMoves != null & highlightMoves.contains(position)) {
+                        if (highlightMoves != null && highlightMoves.contains(position)) {
                             System.out.print(EscapeSequences.SET_BG_COLOR_DARK_GREEN + board.getPiece(new ChessPosition(row, col)));
 
                         }
@@ -305,8 +296,8 @@ public class GameplayUI implements GameHandler {
             System.out.println(EscapeSequences.RESET_BG_COLOR);
         }
         System.out.print(EscapeSequences.SET_BG_COLOR_LIGHT_GREY + "   "); // for the row number
-        for (int i = 0; i < backwardsHeaderString.length(); i++) {
-            System.out.print(EscapeSequences.SET_BG_COLOR_LIGHT_GREY + EscapeSequences.SMALLEMPTY + backwardsHeaderString.charAt(i) + " ");
+        for (int i = 1; i <= 8; i++) {
+            System.out.print(EscapeSequences.SET_BG_COLOR_LIGHT_GREY + EscapeSequences.SMALLEMPTY + i + " ");
         }
         System.out.print("   ");
         System.out.println(EscapeSequences.RESET_BG_COLOR);

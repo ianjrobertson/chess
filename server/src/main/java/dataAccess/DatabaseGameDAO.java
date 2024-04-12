@@ -48,8 +48,8 @@ public class DatabaseGameDAO implements GameDAO{
             throw new DataAccessException("Error: bad request");
         }
         try (var preparedStatement = DatabaseManager.getConnection().prepareStatement("UPDATE game SET chessGame = ? WHERE gameID = ?")) {
-            preparedStatement.setInt(1, g.gameID());
-            preparedStatement.setString(2, new Gson().toJson(g.game()));
+            preparedStatement.setString(1, new Gson().toJson(g.game()));
+            preparedStatement.setInt(2, g.gameID());
             preparedStatement.executeUpdate();
         }
         catch (SQLException e) {

@@ -12,6 +12,14 @@ import java.util.Objects;
  * signature of the existing methods.
  */
 public class ChessPiece {
+    private static final String UNICODE_ESCAPE = "\u001b";
+    private static final String SET_TEXT_COLOR = UNICODE_ESCAPE + "[38;5;";
+    public static final String RESET_TEXT_COLOR = SET_TEXT_COLOR + "0m";
+    public static final String SET_TEXT_COLOR_WHITE = SET_TEXT_COLOR + "15m";
+    public static final String SET_TEXT_COLOR_RED = SET_TEXT_COLOR + "160m";
+    public static final String SET_TEXT_COLOR_GREEN = SET_TEXT_COLOR + "46m";
+    public static final String SET_TEXT_COLOR_LIGHT_GREY = SET_TEXT_COLOR + "242m";
+    public static final String SET_TEXT_COLOR_BLUE = SET_TEXT_COLOR + "12m";
     public static final String WHITE_KING = " ♔ ";
     public static final String WHITE_QUEEN = " ♕ ";
     public static final String WHITE_BISHOP = " ♗ ";
@@ -31,39 +39,39 @@ public class ChessPiece {
         switch(this.type) {
             case KING: {
                 if (this.pieceColor == ChessGame.TeamColor.WHITE)
-                    return WHITE_KING;
+                    return SET_TEXT_COLOR_BLUE + BLACK_KING + SET_TEXT_COLOR_WHITE;
                 else
-                    return BLACK_KING;
+                    return SET_TEXT_COLOR_RED + BLACK_KING + SET_TEXT_COLOR_WHITE;
             }
             case QUEEN: {
                 if (this.pieceColor == ChessGame.TeamColor.WHITE)
-                    return WHITE_QUEEN;
+                    return SET_TEXT_COLOR_BLUE + BLACK_QUEEN+ SET_TEXT_COLOR_WHITE;
                 else
-                    return BLACK_QUEEN;
+                    return SET_TEXT_COLOR_RED + BLACK_QUEEN+ SET_TEXT_COLOR_WHITE;
             }
             case KNIGHT: {
                 if (this.pieceColor == ChessGame.TeamColor.WHITE)
-                    return WHITE_KNIGHT;
+                    return SET_TEXT_COLOR_BLUE + BLACK_KNIGHT+ SET_TEXT_COLOR_WHITE;
                 else
-                    return BLACK_KNIGHT;
+                    return SET_TEXT_COLOR_RED + BLACK_KNIGHT+ SET_TEXT_COLOR_WHITE;
             }
             case BISHOP: {
                 if (this.pieceColor == ChessGame.TeamColor.WHITE)
-                    return WHITE_BISHOP;
+                    return SET_TEXT_COLOR_BLUE + BLACK_BISHOP+ SET_TEXT_COLOR_WHITE;
                 else
-                    return BLACK_BISHOP;
+                    return SET_TEXT_COLOR_RED + BLACK_BISHOP+ SET_TEXT_COLOR_WHITE;
             }
             case ROOK: {
                 if (this.pieceColor == ChessGame.TeamColor.WHITE)
-                    return WHITE_ROOK;
+                    return SET_TEXT_COLOR_BLUE + BLACK_ROOK+ SET_TEXT_COLOR_WHITE;
                 else
-                    return BLACK_ROOK;
+                    return SET_TEXT_COLOR_RED + BLACK_ROOK+ SET_TEXT_COLOR_WHITE;
             }
             case PAWN: {
                 if (this.pieceColor == ChessGame.TeamColor.WHITE)
-                    return WHITE_PAWN;
+                    return SET_TEXT_COLOR_BLUE + BLACK_PAWN + SET_TEXT_COLOR_WHITE;
                 else
-                    return BLACK_PAWN;
+                    return SET_TEXT_COLOR_RED + BLACK_PAWN+ SET_TEXT_COLOR_WHITE;
             }
             case null, default: {
                 return EMPTY;

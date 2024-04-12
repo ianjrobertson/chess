@@ -3,6 +3,7 @@ package WebSocketFacade;
 import com.google.gson.Gson;
 import server.Server;
 import ui.GameHandler;
+import ui.GameplayUI;
 import webSocketMessages.serverMessages.ErrorMessage;
 import webSocketMessages.serverMessages.LoadGameMessage;
 import webSocketMessages.serverMessages.NotificationMessage;
@@ -14,10 +15,10 @@ import java.net.URI;
 
 public class WebSocketFacade extends Endpoint {
     private Session session;
-    private GameHandler gameHandler;
+    private final GameHandler gameHandler;
 
-    public WebSocketFacade() {
-
+    public WebSocketFacade(GameHandler gameHandler) {
+        this.gameHandler = gameHandler;
     }
 
     @Override
@@ -30,30 +31,29 @@ public class WebSocketFacade extends Endpoint {
         this.session = container.connectToServer(this, uri);
 
         this.session.addMessageHandler(new MessageHandler.Whole<String>() {
+            @Override
             public void onMessage(String message) {
                 ServerMessage serverMessage = new Gson().fromJson(message, ServerMessage.class);
                 switch (serverMessage.getServerMessageType()) {
                     case ServerMessage.ServerMessageType.NOTIFICATION: {
-                        NotificationMessage notificationMessage = (NotificationMessage) serverMessage;
+                        NotificationMessage notificationMessage = new Gson().fromJson(message, NotificationMessage.class);
                         gameHandler.printMessage(notificationMessage.getMessage());
                         break;
                     }
                     case ServerMessage.ServerMessageType.ERROR: {
-                        ErrorMessage errorMessage = (ErrorMessage) serverMessage;
+                        ErrorMessage errorMessage = new Gson().fromJson(message, ErrorMessage.class);
                         gameHandler.printMessage(errorMessage.getErrorMessage());
                         break;
                     }
-                    case ServerMessage.ServerMessageType.LOAD_GAME : {
-                        LoadGameMessage loadGameMessage = (LoadGameMessage) serverMessage;
+                    case ServerMessage.ServerMessageType.LOAD_GAME: {
+                        LoadGameMessage loadGameMessage = new Gson().fromJson(message, LoadGameMessage.class);
                         gameHandler.updateGame(loadGameMessage);
                         break;
                     }
                 }
             }
         });
-
     }
-
     public void send(String message) throws Exception {
         this.session.getBasicRemote().sendText(message);
     }
