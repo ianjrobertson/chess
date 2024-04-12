@@ -126,6 +126,7 @@ public class PostloginUI {
             System.out.println("Successfully Joined game: " + gameID);
             //Call GameUI
             GameplayUI gameplayUI = new GameplayUI(gameID, sessionAuthToken, serverFacade, teamColor);
+            gameplayUI.run();
         }
         catch (Exception e) {
             System.out.println(e.getMessage());
@@ -139,6 +140,7 @@ public class PostloginUI {
             JoinGameRequest req = new JoinGameRequest(null, gameID);
             serverFacade.joinGame(req, sessionAuthToken);
             GameplayUI gameplayUI = new GameplayUI(gameID, sessionAuthToken, serverFacade, null);
+            gameplayUI.run();
         }
         catch (Exception e) {
             System.out.println(e.getMessage());

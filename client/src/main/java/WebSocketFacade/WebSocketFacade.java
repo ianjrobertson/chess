@@ -36,14 +36,17 @@ public class WebSocketFacade extends Endpoint {
                     case ServerMessage.ServerMessageType.NOTIFICATION: {
                         NotificationMessage notificationMessage = (NotificationMessage) serverMessage;
                         gameHandler.printMessage(notificationMessage.getMessage());
+                        break;
                     }
                     case ServerMessage.ServerMessageType.ERROR: {
                         ErrorMessage errorMessage = (ErrorMessage) serverMessage;
                         gameHandler.printMessage(errorMessage.getErrorMessage());
+                        break;
                     }
                     case ServerMessage.ServerMessageType.LOAD_GAME : {
                         LoadGameMessage loadGameMessage = (LoadGameMessage) serverMessage;
                         gameHandler.updateGame(loadGameMessage);
+                        break;
                     }
                 }
             }

@@ -10,6 +10,7 @@ import org.eclipse.jetty.websocket.api.annotations.*;
 import service.*;
 import service.ServiceRecords.ListGamesRequest;
 import service.ServiceRecords.ListGamesResponse;
+import spark.Spark;
 import webSocketMessages.serverMessages.LoadGameMessage;
 import webSocketMessages.serverMessages.NotificationMessage;
 import webSocketMessages.serverMessages.ServerMessage;
@@ -27,18 +28,26 @@ public class WebSocketHandler {
     private final LeaveGameService leaveGameService = new LeaveGameService();
     private final ResignService resignService = new ResignService();
 
-    @OnWebSocketConnect
-    public void onConnect(Session session) {
+    public WebSocketHandler() {
 
     }
-    @OnWebSocketClose
-    public void onClose(Session session) {
 
-    }
-    @OnWebSocketError
-    public void onError(Throwable exception) {
+    /**
+     * @OnWebSocketConnect
+     *     public void onConnect(Session session) {
+     *
+     *     }
+     *     @OnWebSocketClose
+     *     public void onClose(Session session) {
+     *
+     *     }
+     *     @OnWebSocketError
+     *     public void onError(Throwable exception) {
+     *
+     *     }
+     *
+     */
 
-    }
 
     @OnWebSocketMessage
     public void onMessage(Session session, String message) throws Exception {
@@ -87,10 +96,10 @@ public class WebSocketHandler {
                     return game;
                 }
             }
-            onError(new Throwable("Invalid Game ID"));
+            //onError(new Throwable("Invalid Game ID"));
         }
         catch (DataAccessException d) {
-            onError(d);
+            //onError(d);
         }
         return null;
     }
@@ -131,7 +140,7 @@ public class WebSocketHandler {
             this.broadcastMessage(joinPlayerMessage.getGameID(), notification, joinPlayerMessage.getAuthString());
         }
         catch (Exception e) {
-            onError(e);
+            //onError(e);
         }
     }
 
@@ -153,7 +162,7 @@ public class WebSocketHandler {
 
         }
         catch(Exception e) {
-            onError(e);
+            //onError(e);
         }
     }
 
@@ -177,7 +186,7 @@ public class WebSocketHandler {
             this.broadcastMessage(makeMoveMessage.getGameID(), notification, makeMoveMessage.getAuthString());
         }
         catch  (Exception e) {
-            onError(e); //need more specific error handling for invalid move exception
+            //onError(e); //need more specific error handling for invalid move exception
         }
     }
 
@@ -198,7 +207,7 @@ public class WebSocketHandler {
             // I think we also need to disconnect the user from the session for this one as well.
         }
         catch (Exception e) {
-            onError(e);
+            //onError(e);
         }
     }
 
@@ -211,7 +220,7 @@ public class WebSocketHandler {
             this.broadcastMessage(resignMessage.getGameID(), notificationMessage, resignMessage.getAuthString());
         }
         catch (Exception e) {
-            onError(e);
+            //onError(e);
         }
 
 
