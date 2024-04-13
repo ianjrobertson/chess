@@ -47,9 +47,11 @@ public class DatabaseGameDAO implements GameDAO{
         if (g == null || g.gameName() == null) {
             throw new DataAccessException("Error: bad request");
         }
-        try (var preparedStatement = DatabaseManager.getConnection().prepareStatement("UPDATE game SET chessGame = ? WHERE gameID = ?")) {
+        try (var preparedStatement = DatabaseManager.getConnection().prepareStatement("UPDATE game SET chessGame = ?, whiteUsername = ?, blackUsername = ? WHERE gameID = ?")) {
             preparedStatement.setString(1, new Gson().toJson(g.game()));
-            preparedStatement.setInt(2, g.gameID());
+            preparedStatement.setString(2, g.whiteUsername());
+            preparedStatement.setString(3, g.blackUsername());
+            preparedStatement.setInt(4, g.gameID());
             preparedStatement.executeUpdate();
         }
         catch (SQLException e) {

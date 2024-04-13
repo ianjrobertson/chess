@@ -36,8 +36,6 @@ public class GameplayUI implements GameHandler {
             else {
                 webSocketFacade.joinObserver(new JoinObserverMessage(sessionAuthToken, UserGameCommand.CommandType.JOIN_OBSERVER, gameID));
             }
-            //this.redraw();
-            //System.out.print(EscapeSequences.RESET_BG_COLOR + EscapeSequences.SET_BG_COLOR_BLUE);
         }
         catch (Exception e) {
             System.out.println(e.getMessage());
@@ -64,7 +62,6 @@ public class GameplayUI implements GameHandler {
     }
 
     public void updateGame(LoadGameMessage message) {
-        System.out.println("Load game request recieved by game handler");
         if (color == ChessGame.TeamColor.WHITE || color == null)
             this.printWhite(message.getGame().getBoard(), null);
         else
@@ -125,7 +122,7 @@ public class GameplayUI implements GameHandler {
     }
 
     private ChessMove parseMove(String input) {
-        //format: move 1 2 -> 3 5
+        //format: move 1 2 to 3 5 queen
         String[] words = input.trim().split("\\s+");
         int startRow = Integer.parseInt(words[1]);
         int startCol = Integer.parseInt(words[2]);
@@ -141,8 +138,8 @@ public class GameplayUI implements GameHandler {
     private static ChessPiece.PieceType getPromotionPiece(String[] words) {
         ChessPiece.PieceType promotionPiece = null;
 
-        if (words.length > 9) {
-            String promotion = words[9];
+        if (words.length > 6) {
+            String promotion = words[6];
             switch(promotion) {
                 case("king") -> promotionPiece = ChessPiece.PieceType.KING;
                 case("queen") -> promotionPiece = ChessPiece.PieceType.QUEEN;
@@ -190,7 +187,7 @@ public class GameplayUI implements GameHandler {
 
     private void printBlack(ChessBoard board, Collection<ChessPosition> highlightMoves) {
         System.out.print(EscapeSequences.SET_BG_COLOR_LIGHT_GREY + "   "); // for the row number
-        for (int i = 1; i <= 8; i++) {
+        for (int i = 8; i >= 1; i--) {
             System.out.print(EscapeSequences.SET_BG_COLOR_LIGHT_GREY + EscapeSequences.SMALLEMPTY + i + " ");
         }
         System.out.print("   ");
@@ -238,7 +235,7 @@ public class GameplayUI implements GameHandler {
             System.out.println(EscapeSequences.RESET_BG_COLOR);
         }
         System.out.print(EscapeSequences.SET_BG_COLOR_LIGHT_GREY + "   "); // for the row number
-        for (int i = 1; i <= 8; i++) {
+        for (int i = 8; i >= 1; i--) {
             System.out.print(EscapeSequences.SET_BG_COLOR_LIGHT_GREY + EscapeSequences.SMALLEMPTY + i + " ");
         }
         System.out.print("   ");

@@ -16,7 +16,7 @@ public class WebSocketSessions {
         sessionMap = new HashMap<>();
     }
 
-    public void addSession(Integer gameID, String authToken, Session session) {
+    public void addSession(Integer gameID, String authToken, Session session) throws Exception {
         if (sessionMap.containsKey(gameID)) { //If game exists,
             sessionMap.get(gameID).put(authToken, session); //update existing mapping
         }
