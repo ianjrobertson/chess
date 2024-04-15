@@ -49,9 +49,20 @@ public class WebSocketSessions {
         }
     }
 
-    public Map<String, Session> getSessionsForGame(Integer gameID) {
-        //default return?
+    public Map<String, Session> getSessionsForGame(Integer gameID) throws Exception {
+        if (this.sessionMap.get(gameID) == null)
+            throw new Exception("Error: Bad Request");
         return this.sessionMap.get(gameID);
     }
 
+    public Integer getGameID(String authToken) {
+        //given an auth token
+        //return the mapping
+        for (var game: sessionMap.keySet()) {
+            if (sessionMap.get(game).containsKey(authToken)) {
+                return game;
+            }
+        }
+        return null;
+    }
 }

@@ -25,7 +25,7 @@ public class LeaveGameService {
             blackUsername = null;
         }
         else {
-            throw new Exception("Error: Invalid username");
+            //throw new Exception("Error: Invalid username");
         }
         GameData newGame = new GameData(game.gameID(), whiteUsername, blackUsername, game.gameName(), game.game());
 

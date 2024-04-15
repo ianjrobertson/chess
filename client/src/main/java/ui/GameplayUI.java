@@ -61,6 +61,10 @@ public class GameplayUI implements GameHandler {
         }
     }
 
+    private boolean isPlayer() {
+        return this.color != null;
+    }
+
     public void updateGame(LoadGameMessage message) {
         if (color == ChessGame.TeamColor.WHITE || color == null)
             this.printWhite(message.getGame().getBoard(), null);
@@ -113,6 +117,8 @@ public class GameplayUI implements GameHandler {
     private void makeMove(String input) {
         //If the move is a promotion move, we need to ask what piece the player wants
         try {
+            if (!isPlayer())
+                throw new Exception("Error: not a player");
             ChessMove move = parseMove(input);
             webSocketFacade.makeMove(new MakeMoveMessage(UserGameCommand.CommandType.MAKE_MOVE, sessionAuthToken, gameID, move));
         }

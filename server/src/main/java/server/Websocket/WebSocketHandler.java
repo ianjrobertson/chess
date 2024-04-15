@@ -1,16 +1,15 @@
 package server.Websocket;
 
 import chess.ChessGame;
-import chess.ChessMove;
 import chess.MovesCalculator.InvalidMoveException;
 import com.google.gson.Gson;
 import dataAccess.DataAccessException;
+import model.AuthData;
 import model.GameData;
 import org.eclipse.jetty.websocket.api.annotations.*;
 import service.*;
 import service.ServiceRecords.ListGamesRequest;
 import service.ServiceRecords.ListGamesResponse;
-import spark.Spark;
 import webSocketMessages.serverMessages.ErrorMessage;
 import webSocketMessages.serverMessages.LoadGameMessage;
 import webSocketMessages.serverMessages.NotificationMessage;
@@ -122,22 +121,39 @@ public class WebSocketHandler {
 
     public void joinPlayer(JoinPlayerMessage joinPlayerMessage, Session session) throws Exception {
         try {
+            GameData game = this.getGame(joinPlayerMessage.getGameID(), joinPlayerMessage.getAuthString());
+
+            AuthData auth = joinService.join(joinPlayerMessage.getAuthString(), joinPlayerMessage.getGameID());
+
+            if (joinPlayerMessage.getColor() == ChessGame.TeamColor.WHITE) {
+                if (game.whiteUsername() != null && !game.whiteUsername().equals(auth.username())) {
+                    throw new Exception("Error: Color already taken");
+                }
+            }
+            else if(joinPlayerMessage.getColor() == ChessGame.TeamColor.BLACK) {
+                if(!game.blackUsername().equals(auth.username())) {
+                    throw new Exception("Error: Color already taken");
+                }
+            }
+
             sessions.addSession(joinPlayerMessage.getGameID(), joinPlayerMessage.getAuthString(), session);
             //1. Server sends a loadGame message back to the root client
-            GameData game = this.getGame(joinPlayerMessage.getGameID(), joinPlayerMessage.getAuthString());
+
 
             LoadGameMessage loadGameMessage = new LoadGameMessage(ServerMessage.ServerMessageType.LOAD_GAME, game.game());
             this.sendMessage(joinPlayerMessage.getGameID(), loadGameMessage, joinPlayerMessage.getAuthString() ); //review everything we have done
 
             //2. Server sends a notification message to all users in the session.
-            String username = joinService.join(joinPlayerMessage.getAuthString());
-            var message = String.format("%s joined the game as %s", username, joinPlayerMessage.getColor());
+            var message = String.format("%s joined the game as %s", auth.username(), joinPlayerMessage.getColor());
             var notification = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, message);
             this.broadcastMessage(joinPlayerMessage.getGameID(), notification, joinPlayerMessage.getAuthString());
         }
+        catch (DataAccessException d) {
+            Integer gameID = sessions.getGameID(joinPlayerMessage.getAuthString());
+            this.sendMessage(gameID, new ErrorMessage(ServerMessage.ServerMessageType.ERROR, d.getMessage()), joinPlayerMessage.getAuthString());
+        }
         catch (Exception e) {
             this.sendMessage(joinPlayerMessage.getGameID(), new ErrorMessage(ServerMessage.ServerMessageType.ERROR, e.getMessage()), joinPlayerMessage.getAuthString());
-            //onError(e);
         }
     }
 
@@ -151,7 +167,7 @@ public class WebSocketHandler {
             this.sendMessage(joinObserverMessage.getGameID(), loadGameMessage, joinObserverMessage.getAuthString());
 
             // Server sends a Notification message to all other clients in that game informing them the root client joined as an observer.
-            String username = joinService.join(joinObserverMessage.getAuthString()); // the problem we have is the join Observer won't have a team color...
+            String username = joinService.join(joinObserverMessage.getAuthString(), joinObserverMessage.getGameID()).username(); // the problem we have is the join Observer won't have a team color...
             var message = String.format("%s joined the game as an observer", username);
             var notification = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, message);
             this.broadcastMessage(joinObserverMessage.getGameID(), notification, joinObserverMessage.getAuthString());
@@ -165,10 +181,11 @@ public class WebSocketHandler {
 
     public void makeMove(MakeMoveMessage makeMoveMessage) throws Exception {
         try {
-
             // We need to validate that it is the current players turn
             String username;
             GameData game = makeMoveService.makeMove(makeMoveMessage.getGameID(), makeMoveMessage.getAuthString(), makeMoveMessage.getMove()); // -> makeMoveService validates move through makeMove in ChessGame class. Throws invalidMoveException
+            if (game.game().isGameOver())
+                throw new Exception("Error: game is over"); // if game is over -- don't make a move.
             if (game.game().getTeamTurn() == ChessGame.TeamColor.WHITE) {
                 username = game.blackUsername();
             }
@@ -214,7 +231,6 @@ public class WebSocketHandler {
         }
         catch  (Exception e) {
             this.sendMessage(makeMoveMessage.getGameID(), new ErrorMessage(ServerMessage.ServerMessageType.ERROR, e.getMessage()), makeMoveMessage.getAuthString());
-            //onError(e); //need more specific error handling for invalid move exception
         }
     }
 
@@ -238,19 +254,17 @@ public class WebSocketHandler {
         }
     }
 
-    public void resignGame(ResignMessage resignMessage, Session session) {
+    public void resignGame(ResignMessage resignMessage, Session session) throws Exception {
         try {
             String username = resignService.resign(resignMessage.getGameID(), resignMessage.getAuthString());
             var message = String.format("%s has resigned", username);
             NotificationMessage notificationMessage = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, message);
             this.broadcastMessage(resignMessage.getGameID(), notificationMessage, resignMessage.getAuthString());
+            this.sendMessage(resignMessage.getGameID(),notificationMessage, resignMessage.getAuthString());
         }
         catch (Exception e) {
-            System.out.println(e.getMessage());
-            //onError(e);
+            this.sendMessage(resignMessage.getGameID(), new ErrorMessage(ServerMessage.ServerMessageType.ERROR, e.getMessage()), resignMessage.getAuthString());
         }
-
-
         //Server marks the game as over (no more moves can be made). Game is updated in the database.
         // How do mark the game as over?
         //Server sends a Notification message to all clients in that game informing them that the root client resigned. This applies to both players and observers.
