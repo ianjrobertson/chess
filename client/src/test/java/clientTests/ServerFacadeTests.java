@@ -4,7 +4,7 @@ import chess.ChessGame;
 import org.junit.jupiter.api.*;
 import server.Server;
 import ServerFacade.ServerFacade;
-import service.ServiceRecords.*;
+import ServerFacade.ServiceRecords.*;
 
 
 public class ServerFacadeTests {

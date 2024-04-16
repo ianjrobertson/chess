@@ -1,11 +1,7 @@
 package ui;
 
 import ServerFacade.ServerFacade;
-import service.ServiceRecords.LoginRequest;
-import service.ServiceRecords.LoginResponse;
-import service.ServiceRecords.RegisterRequest;
-import service.ServiceRecords.RegisterResponse;
-
+import ServerFacade.ServiceRecords.*;
 import java.util.Scanner;
 
 public class PreloginUI {
