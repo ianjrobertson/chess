@@ -3,7 +3,7 @@ package ui;
 import chess.ChessGame;
 import model.GameData;
 import ServerFacade.ServerFacade;
-import service.ServiceRecords.*;
+import ServerFacade.ServiceRecords.*;
 
 import java.util.*;
 
