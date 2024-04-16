@@ -56,10 +56,6 @@ public class WebSocketFacade extends Endpoint {
         this.session.getBasicRemote().sendText(message);
     }
 
-    public void disconnect() {
-
-    }
-
     public void joinPlayer(JoinPlayerMessage message) throws Exception {
         this.send(new Gson().toJson(message));
     }

@@ -191,8 +191,46 @@ public class GameplayUI implements GameHandler {
         }
     }
 
+    private void printPiece(int row, int col, ChessBoard board, Collection<ChessPosition> highlightMoves) {
+        ChessPosition position = new ChessPosition(row, col);
+        ChessPiece piece = board.getPiece(position);
+        if (piece == null) {
+            if ((row + col) % 2 != 0) {
+                if (highlightMoves != null && highlightMoves.contains(position)) {
+                    System.out.print(EscapeSequences.SET_BG_COLOR_GREEN + EscapeSequences.EMPTY);
+                }
+                else
+                    System.out.print(EscapeSequences.SET_BG_COLOR_WHITE + EscapeSequences.EMPTY);
+            }
+            else {
+                if (highlightMoves != null && highlightMoves.contains(position)) {
+                    System.out.print(EscapeSequences.SET_BG_COLOR_DARK_GREEN + EscapeSequences.EMPTY);
+                }
+                else
+                    System.out.print(EscapeSequences.SET_BG_COLOR_DARK_GREY + EscapeSequences.EMPTY);
+            }
+        }
+        else {
+            if ((row + col) % 2 != 0) {
+                if (highlightMoves != null && highlightMoves.contains(position)) {
+                    System.out.print(EscapeSequences.SET_BG_COLOR_GREEN + board.getPiece(new ChessPosition(row, col)));
+                }
+                else
+                    System.out.print(EscapeSequences.SET_BG_COLOR_WHITE + board.getPiece(new ChessPosition(row, col)));
+            }
+            else {
+                if (highlightMoves != null && highlightMoves.contains(position)) {
+                    System.out.print(EscapeSequences.SET_BG_COLOR_DARK_GREEN + board.getPiece(new ChessPosition(row, col)));
+
+                }
+                else
+                    System.out.print(EscapeSequences.SET_BG_COLOR_DARK_GREY + board.getPiece(new ChessPosition(row, col)));
+            }
+        }
+    }
+
     private void printBlack(ChessBoard board, Collection<ChessPosition> highlightMoves) {
-        System.out.print(EscapeSequences.SET_BG_COLOR_LIGHT_GREY + "   "); // for the row number
+        printAwkwardSpacing();
         for (int i = 8; i >= 1; i--) {
             System.out.print(EscapeSequences.SET_BG_COLOR_LIGHT_GREY + EscapeSequences.SMALLEMPTY + i + " ");
         }
@@ -200,47 +238,13 @@ public class GameplayUI implements GameHandler {
         System.out.println(EscapeSequences.RESET_BG_COLOR);
         for (int row = 1; row <= 8; row ++) {
             System.out.print(EscapeSequences.SET_BG_COLOR_LIGHT_GREY + " " + row + " ");
-            for (int col = 8; col > 0; col--) {
-                ChessPosition position = new ChessPosition(row, col);
-                ChessPiece piece = board.getPiece(position);
-                if (piece == null) {
-                    if ((row + col) % 2 != 0) {
-                        if (highlightMoves != null && highlightMoves.contains(position)) {
-                            System.out.print(EscapeSequences.SET_BG_COLOR_GREEN + EscapeSequences.EMPTY);
-                        }
-                        else
-                            System.out.print(EscapeSequences.SET_BG_COLOR_WHITE + EscapeSequences.EMPTY);
-                    }
-                    else {
-                        if (highlightMoves != null && highlightMoves.contains(position)) {
-                            System.out.print(EscapeSequences.SET_BG_COLOR_DARK_GREEN + EscapeSequences.EMPTY);
-                        }
-                        else
-                            System.out.print(EscapeSequences.SET_BG_COLOR_DARK_GREY + EscapeSequences.EMPTY);
-                    }
-                }
-                else {
-                    if ((row + col) % 2 != 0) {
-                        if (highlightMoves != null && highlightMoves.contains(position)) {
-                            System.out.print(EscapeSequences.SET_BG_COLOR_GREEN + board.getPiece(new ChessPosition(row, col)));
-                        }
-                        else
-                            System.out.print(EscapeSequences.SET_BG_COLOR_WHITE + board.getPiece(new ChessPosition(row, col)));
-                    }
-                    else {
-                        if (highlightMoves != null && highlightMoves.contains(position)) {
-                            System.out.print(EscapeSequences.SET_BG_COLOR_DARK_GREEN + board.getPiece(new ChessPosition(row, col)));
-
-                        }
-                        else
-                            System.out.print(EscapeSequences.SET_BG_COLOR_DARK_GREY + board.getPiece(new ChessPosition(row, col)));
-                    }
-                }
+            for (int col = 8; col >= 1; col--) {
+                printPiece(row, col, board, highlightMoves);
             }
             System.out.print(EscapeSequences.SET_BG_COLOR_LIGHT_GREY + " " + row + " ");
             System.out.println(EscapeSequences.RESET_BG_COLOR);
         }
-        System.out.print(EscapeSequences.SET_BG_COLOR_LIGHT_GREY + "   "); // for the row number
+        printAwkwardSpacing();
         for (int i = 8; i >= 1; i--) {
             System.out.print(EscapeSequences.SET_BG_COLOR_LIGHT_GREY + EscapeSequences.SMALLEMPTY + i + " ");
         }
@@ -249,7 +253,7 @@ public class GameplayUI implements GameHandler {
     }
 
     private void printWhite(ChessBoard board, Collection<ChessPosition> highlightMoves) {
-        System.out.print(EscapeSequences.SET_BG_COLOR_LIGHT_GREY + "   "); // for the row number
+        printAwkwardSpacing();
         for (int i = 1; i <= 8 ; i++) {
             System.out.print(EscapeSequences.SET_BG_COLOR_LIGHT_GREY + EscapeSequences.SMALLEMPTY + i + " ");
         }
@@ -259,50 +263,20 @@ public class GameplayUI implements GameHandler {
         for (int row = 8; row >= 1; row--) {
             System.out.print(EscapeSequences.SET_BG_COLOR_LIGHT_GREY + " " + row + " ");
             for (int col = 1; col <= 8; col++) {
-                ChessPosition position = new ChessPosition(row, col);
-                ChessPiece piece = board.getPiece(position);
-                if (piece == null) {
-                    if ((row + col) % 2 != 0) {
-                        if (highlightMoves != null && highlightMoves.contains(position)) {
-                            System.out.print(EscapeSequences.SET_BG_COLOR_GREEN + EscapeSequences.EMPTY);
-                        }
-                        else
-                            System.out.print(EscapeSequences.SET_BG_COLOR_WHITE + EscapeSequences.EMPTY);
-                    }
-                    else {
-                        if (highlightMoves != null && highlightMoves.contains(position)) {
-                            System.out.print(EscapeSequences.SET_BG_COLOR_DARK_GREEN + EscapeSequences.EMPTY);
-                        }
-                        else
-                            System.out.print(EscapeSequences.SET_BG_COLOR_DARK_GREY + EscapeSequences.EMPTY);
-                    }
-                }
-                else {
-                    if ((row + col) % 2 != 0) {
-                        if (highlightMoves != null && highlightMoves.contains(position)) {
-                            System.out.print(EscapeSequences.SET_BG_COLOR_GREEN + board.getPiece(new ChessPosition(row, col)));
-                        }
-                        else
-                            System.out.print(EscapeSequences.SET_BG_COLOR_WHITE + board.getPiece(new ChessPosition(row, col)));
-                    }
-                    else {
-                        if (highlightMoves != null && highlightMoves.contains(position)) {
-                            System.out.print(EscapeSequences.SET_BG_COLOR_DARK_GREEN + board.getPiece(new ChessPosition(row, col)));
-
-                        }
-                        else
-                            System.out.print(EscapeSequences.SET_BG_COLOR_DARK_GREY + board.getPiece(new ChessPosition(row, col)));
-                    }
-                }
+                printPiece(row, col, board, highlightMoves);
             }
             System.out.print(EscapeSequences.SET_BG_COLOR_LIGHT_GREY + " " + row + " ");
             System.out.println(EscapeSequences.RESET_BG_COLOR);
         }
-        System.out.print(EscapeSequences.SET_BG_COLOR_LIGHT_GREY + "   "); // for the row number
+        printAwkwardSpacing();
         for (int i = 1; i <= 8; i++) {
             System.out.print(EscapeSequences.SET_BG_COLOR_LIGHT_GREY + EscapeSequences.SMALLEMPTY + i + " ");
         }
         System.out.print("   ");
         System.out.println(EscapeSequences.RESET_BG_COLOR);
+    }
+
+    private void printAwkwardSpacing() {
+        System.out.print(EscapeSequences.SET_BG_COLOR_LIGHT_GREY + "   "); // for the row number
     }
 }
