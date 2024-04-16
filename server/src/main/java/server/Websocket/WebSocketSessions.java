@@ -5,15 +5,26 @@ import org.eclipse.jetty.websocket.api.*;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class WebSocketSessions {
     //we use this to store all the websocket sessions happening on our server.
 
     //so we need to modify our server code to open up a websocket connection when a game starts.
     //make this static? or make the map static?
-    Map<Integer, Map<String, Session>> sessionMap;
+    ConcurrentHashMap<Integer, Map<String, Session>> sessionMap;
     public WebSocketSessions() {
-        sessionMap = new HashMap<>();
+        sessionMap = new ConcurrentHashMap<>();
+    }
+
+    public void clearOldConnections() {
+        for (var game : sessionMap.keySet()) {
+            for (var connection: sessionMap.get(game).values()) {
+                if (!connection.isOpen()) {
+                    sessionMap.remove(game);
+                }
+            }
+        }
     }
 
     public void addSession(Integer gameID, String authToken, Session session) throws Exception {
@@ -37,14 +48,10 @@ public class WebSocketSessions {
     }
 
     public void removeSession(Session session) {
-        //so each game has a map of the Users in the game and the session.
-        //So we need to find the game that has the related session. And then remove The game <user, session> pairing from the session map
-        Iterator<Map.Entry<Integer, Map<String, Session>>> iterator = this.sessionMap.entrySet().iterator();
-        while (iterator.hasNext()) {
-            Map.Entry<Integer, Map<String, Session>> entry = iterator.next();
-            Map<String, Session> innerMap = entry.getValue();
-            if (innerMap.containsValue(session)) {
-                iterator.remove(); // Remove the entry from the outer map
+        for(var game: sessionMap.keySet()) {
+            var connections = sessionMap.get(game);
+            if (connections.containsValue(session)) {
+                sessionMap.remove(game, connections);
             }
         }
     }

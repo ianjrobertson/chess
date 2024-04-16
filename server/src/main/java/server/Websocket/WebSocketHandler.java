@@ -51,6 +51,7 @@ public class WebSocketHandler {
 
     @OnWebSocketMessage
     public void onMessage(Session session, String message) throws Exception {
+        sessions.clearOldConnections();
         System.out.println("Received message");
         System.out.println(message);
         UserGameCommand command = new Gson().fromJson(message, UserGameCommand.class);
@@ -84,7 +85,7 @@ public class WebSocketHandler {
         }
     }
 
-    private GameData getGame(Integer gameID, String authToken) throws Exception{
+    private GameData getGame(Integer gameID, String authToken) throws Exception {
         try {
             ListGamesResponse res = listGamesService.listGames(new ListGamesRequest(authToken));
             for (GameData game: res.games()) {
@@ -95,10 +96,8 @@ public class WebSocketHandler {
             throw new Exception("Error: Invalid GameID");
         }
         catch (DataAccessException d) {
-            System.out.println(d.getMessage());
-            //onError(d);
+            throw new Exception(d.getMessage());
         }
-        return null;
     }
 
     public void broadcastMessage(Integer gameID, ServerMessage message, String exceptThisAuthToken) throws Exception {
@@ -121,22 +120,23 @@ public class WebSocketHandler {
 
     public void joinPlayer(JoinPlayerMessage joinPlayerMessage, Session session) throws Exception {
         try {
+            sessions.addSession(joinPlayerMessage.getGameID(), joinPlayerMessage.getAuthString(), session);
             GameData game = this.getGame(joinPlayerMessage.getGameID(), joinPlayerMessage.getAuthString());
 
             AuthData auth = joinService.join(joinPlayerMessage.getAuthString(), joinPlayerMessage.getGameID());
 
             if (joinPlayerMessage.getColor() == ChessGame.TeamColor.WHITE) {
-                if (game.whiteUsername() != null && !game.whiteUsername().equals(auth.username())) {
-                    throw new Exception("Error: Color already taken");
+                if (game.whiteUsername() == null || !game.whiteUsername().equals(auth.username())) {
+                    throw new Exception("Error: bad request");
                 }
             }
             else if(joinPlayerMessage.getColor() == ChessGame.TeamColor.BLACK) {
-                if(!game.blackUsername().equals(auth.username())) {
-                    throw new Exception("Error: Color already taken");
+                if(game.blackUsername() ==null || !game.blackUsername().equals(auth.username())) {
+                    throw new Exception("Error: bad request");
                 }
             }
 
-            sessions.addSession(joinPlayerMessage.getGameID(), joinPlayerMessage.getAuthString(), session);
+
             //1. Server sends a loadGame message back to the root client
 
 
@@ -148,12 +148,9 @@ public class WebSocketHandler {
             var notification = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, message);
             this.broadcastMessage(joinPlayerMessage.getGameID(), notification, joinPlayerMessage.getAuthString());
         }
-        catch (DataAccessException d) {
-            Integer gameID = sessions.getGameID(joinPlayerMessage.getAuthString());
-            this.sendMessage(gameID, new ErrorMessage(ServerMessage.ServerMessageType.ERROR, d.getMessage()), joinPlayerMessage.getAuthString());
-        }
         catch (Exception e) {
             this.sendMessage(joinPlayerMessage.getGameID(), new ErrorMessage(ServerMessage.ServerMessageType.ERROR, e.getMessage()), joinPlayerMessage.getAuthString());
+            sessions.removeSessionFromGame(joinPlayerMessage.getGameID(), joinPlayerMessage.getAuthString(), session);
         }
     }
 
@@ -249,7 +246,7 @@ public class WebSocketHandler {
             sessions.removeSessionFromGame(leaveMessage.getGameID(), leaveMessage.getAuthString(), session);
         }
         catch (Exception e) {
-            System.out.println(e.getMessage());
+
             //onError(e);
         }
     }
