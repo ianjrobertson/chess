@@ -1,9 +1,7 @@
 package server.Websocket;
 
-//import javax.websocket.Session;
 import org.eclipse.jetty.websocket.api.*;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
