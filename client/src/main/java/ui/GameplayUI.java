@@ -45,6 +45,7 @@ public class GameplayUI implements GameHandler {
     public void run() {
         running = true;
         Scanner scanner = new Scanner(System.in);
+        System.out.println("Game Joined! - type \"help\" to begin");
         while (running) {
             String input = scanner.nextLine();
             String command = getFirstWord(input);

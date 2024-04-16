@@ -127,6 +127,7 @@ public class PostloginUI {
             //Call GameUI
             GameplayUI gameplayUI = new GameplayUI(gameID, sessionAuthToken, serverFacade, teamColor);
             gameplayUI.run();
+            System.out.println("Left game - type \"help\" to get started");
         }
         catch (Exception e) {
             System.out.println(e.getMessage());
@@ -141,6 +142,7 @@ public class PostloginUI {
             serverFacade.joinGame(req, sessionAuthToken);
             GameplayUI gameplayUI = new GameplayUI(gameID, sessionAuthToken, serverFacade, null);
             gameplayUI.run();
+            System.out.println("Left game - type \"help\" to get started");
         }
         catch (Exception e) {
             System.out.println(e.getMessage());
