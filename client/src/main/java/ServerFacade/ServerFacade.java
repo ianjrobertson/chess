@@ -1,10 +1,10 @@
 package ServerFacade;
 
+import ServerFacade.ServiceRecords.*;
 import chess.ChessBoard;
 import chess.ChessGame;
 import com.google.gson.Gson;
 import model.GameData;
-import service.ServiceRecords.*;
 
 import java.io.*;
 import java.net.HttpURLConnection;
